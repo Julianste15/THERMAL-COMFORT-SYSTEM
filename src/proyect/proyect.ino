@@ -15,6 +15,7 @@
 #include <Keypad.h>
 #include "AsyncTaskLib.h"
 #include "DHT.h"
+#include "RFID.h"
 
 // Pin declarations and hardware configuration
 #pragma region LCD configuration
@@ -383,6 +384,7 @@ void setup()
   // set up the LCD's number of columns and rows:
   lcd.begin(16, 2);
   dht.begin();
+  setupRFID()://We initialize the RFID reader
   // About leds
   pinMode(LED_RED, OUTPUT);
   pinMode(LED_GREEN, OUTPUT);
@@ -393,6 +395,7 @@ void setup()
   digitalWrite(LED_RED, LOW);
   digitalWrite(LED_GREEN, LOW);
   digitalWrite(LED_BLUE, LOW);
+
   Serial.println("Starting State Machine...");
   setupStateMachine();
   Serial.println("Start Machine Started");
@@ -407,6 +410,28 @@ void setup()
 
 void loop()
 {
+  
+  //Read RFID card
+  short rfidValor = readTarget();
+  if (rfidValor != -5) {
+    Serial.print("RFID card detected. Value: ");
+    Serial.println(rfidValor);
+    lcd.clear();
+    lcd.print("RFID value: ");
+    lcd.setCursor(0, 1);
+    lcd.print(rfidValor);
+    delay(1000);
+
+    if (rfidValor == 2) {
+      digitalWrite(LED_GREEN, HIGH);
+      delay(1000);
+      digitalWrite(LED_GREEN, LOW);
+    } else if (rfidValor == -2) {
+      digitalWrite(LED_RED, HIGH);
+      delay(1000);
+      digitalWrite(LED_RED, LOW);
+    }
+  }
   //General tasks
   taskSetTime.Update();
   taskReadButton.Update();
