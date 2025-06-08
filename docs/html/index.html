@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.14.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>THERMAL-COMFORT-SYSTEM: THERMAL-COMFORT-SYSTEM</title>
+<title>THERMAL-COMFORT-SYSTEM: THERMAL COMFORT &amp; ACCESS CONTROL SYSTEM</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -88,10 +88,64 @@ $(function(){initNavTree('index.html','',''); });
 </div>
 
 <div><div class="header">
-  <div class="headertitle"><div class="title">THERMAL-COMFORT-SYSTEM </div></div>
+  <div class="headertitle"><div class="title">THERMAL COMFORT &amp; ACCESS CONTROL SYSTEM </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"></div></div><!-- PageDoc -->
+<div class="textblock"><h1 class="doxsection"><a class="anchor" id="intro_sec"></a>
+📌 Overview</h1>
+<p>This project implements an environmental monitoring and security system using Arduino. The system integrates multiple sensors and output devices to supervise ambient conditions and manage secure access through a state machine and asynchronous tasks.</p>
+<h1 class="doxsection"><a class="anchor" id="features_sec"></a>
+⚙️ Main Features</h1>
+<ul>
+<li>LCD display for real-time sensor feedback and alerts.</li>
+<li>Matrix keypad for user password input.</li>
+<li>RFID reader for card-based identification and access control.</li>
+<li>Sensors for temperature, humidity, light (photoresistor), Hall effect (magnetic field), and infrared presence.</li>
+<li>Visual feedback through RGB LEDs.</li>
+<li>Audible feedback using a buzzer with custom melodies.</li>
+<li>Modular finite state machine to handle operational modes.</li>
+<li>Non-blocking behavior using asynchronous task scheduling.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="fsm_sec"></a>
+🔁 Finite State Machine (FSM)</h1>
+<p>The system operates through a set of well-defined states:</p><ul>
+<li>Inicio: Password validation and access initiation.</li>
+<li>MonitorAmbiental: Environmental sensing and display.</li>
+<li>MonitorEventos: Event-based sensing (Hall, infrared).</li>
+<li>Alarma &amp; AlarmaRed: Audible/visual alerts triggered by threshold exceedance.</li>
+<li>Bloqueo: System lockout after failed authentication.</li>
+</ul>
+<p>Transitions are driven by user input, sensor thresholds, or elapsed time, managed via <span class="tt">StateMachineLib</span>.</p>
+<h1 class="doxsection"><a class="anchor" id="hardware_sec"></a>
+🔌 Hardware Components</h1>
+<ul>
+<li>Arduino Mega or Uno</li>
+<li>LCD 16x2 with 6-pin interface</li>
+<li>4x4 Keypad</li>
+<li>DHT11 sensor</li>
+<li>Photoresistor (LDR)</li>
+<li>Analog Hall effect sensor</li>
+<li>Infrared sensor</li>
+<li>RC522 RFID module</li>
+<li>RGB LEDs</li>
+<li>Passive Buzzer</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="structure_sec"></a>
+🧩 Code Organization</h1>
+<p>The source code is modularized into functional regions using <span class="tt">#pragma region</span>, including:</p><ul>
+<li>Setup and loop control</li>
+<li>Sensor reading and evaluation</li>
+<li>FSM transitions and actions</li>
+<li>Input management (keypad, RFID)</li>
+<li>Task scheduling (via <span class="tt">AsyncTaskLib</span>)</li>
+<li>Output functions: LCD display, LEDs, buzzer melodies</li>
+</ul>
+<p>Each region and function is documented with Doxygen-compatible comments for clarity.</p>
+<h1 class="doxsection"><a class="anchor" id="credits_sec"></a>
+📣 Author</h1>
+<p>Developed by Julian,Katherin and Santiago for academic, experimental, or embedded deployment use. <br  />
+ All logic is written in C++ and runs on standard Arduino-compatible boards. </p>
+</div></div><!-- PageDoc -->
 <a href="doxygen_crawl.html"></a>
 </div><!-- contents -->
 </div><!-- doc-content -->

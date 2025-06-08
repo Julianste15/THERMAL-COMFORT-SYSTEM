@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.14.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>THERMAL-COMFORT-SYSTEM: proyect.ino File Reference</title>
+<title>THERMAL-COMFORT-SYSTEM: src/proyect/proyect.ino File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -92,32 +92,47 @@ $(function(){initNavTree('proyect_8ino.html','',''); });
 </div><!--header-->
 <div class="contents">
 
-<p>THERMAL COMFORT SYSTEM using Arduino.  
+<p>Main Arduino sketch for thermal comfort and access control.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;StateMachineLib.h&quot;</code><br />
 <code>#include &lt;LiquidCrystal.h&gt;</code><br />
 <code>#include &lt;Keypad.h&gt;</code><br />
 <code>#include &quot;AsyncTaskLib.h&quot;</code><br />
 <code>#include &quot;DHT.h&quot;</code><br />
+<code>#include &quot;RFID.h&quot;</code><br />
+<code>#include &lt;SPI.h&gt;</code><br />
+<code>#include &lt;MFRC522.h&gt;</code><br />
 </div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:TarjetaRegistrada" id="r_TarjetaRegistrada"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_tarjeta_registrada.html">TarjetaRegistrada</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Estructura que representa una tarjeta RFID registrada en el sistema.  <a href="struct_tarjeta_registrada.html#details">More...</a><br /></td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:a31e20330f8ce94e0dd10b005a15c5898" id="r_a31e20330f8ce94e0dd10b005a15c5898"><td class="memItemLeft" align="right" valign="top"><a id="a31e20330f8ce94e0dd10b005a15c5898" name="a31e20330f8ce94e0dd10b005a15c5898"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>LED_RED</b>&#160;&#160;&#160;10</td></tr>
-<tr class="memitem:aca338dbd19d7940923334629f6e5f3b7" id="r_aca338dbd19d7940923334629f6e5f3b7"><td class="memItemLeft" align="right" valign="top"><a id="aca338dbd19d7940923334629f6e5f3b7" name="aca338dbd19d7940923334629f6e5f3b7"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>LED_GREEN</b>&#160;&#160;&#160;9</td></tr>
-<tr class="memitem:ae2e40566d27689f8581d7b0f12271d45" id="r_ae2e40566d27689f8581d7b0f12271d45"><td class="memItemLeft" align="right" valign="top"><a id="ae2e40566d27689f8581d7b0f12271d45" name="ae2e40566d27689f8581d7b0f12271d45"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>LED_BLUE</b>&#160;&#160;&#160;8</td></tr>
-<tr class="memitem:abc2ad14f0789907024ac765711ffd3da" id="r_abc2ad14f0789907024ac765711ffd3da"><td class="memItemLeft" align="right" valign="top"><a id="abc2ad14f0789907024ac765711ffd3da" name="abc2ad14f0789907024ac765711ffd3da"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>BUTTON_PIN</b>&#160;&#160;&#160;6</td></tr>
+<tr class="memitem:a36932b0e869e0114f32e255f61306d6b" id="r_a36932b0e869e0114f32e255f61306d6b"><td class="memItemLeft" align="right" valign="top"><a id="a36932b0e869e0114f32e255f61306d6b" name="a36932b0e869e0114f32e255f61306d6b"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>RST_PIN</b>&#160;&#160;&#160;32</td></tr>
+<tr class="memdesc:a36932b0e869e0114f32e255f61306d6b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pin de reset para el módulo RC522. <br /></td></tr>
+<tr class="memitem:a86fac98c9b4c98a3e50fc45440878391" id="r_a86fac98c9b4c98a3e50fc45440878391"><td class="memItemLeft" align="right" valign="top"><a id="a86fac98c9b4c98a3e50fc45440878391" name="a86fac98c9b4c98a3e50fc45440878391"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>SS_PIN</b>&#160;&#160;&#160;53</td></tr>
+<tr class="memdesc:a86fac98c9b4c98a3e50fc45440878391"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pin SS (SDA) para la comunicación con el módulo RC522. <br /></td></tr>
+<tr class="memitem:a31e20330f8ce94e0dd10b005a15c5898" id="r_a31e20330f8ce94e0dd10b005a15c5898"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a31e20330f8ce94e0dd10b005a15c5898">LED_RED</a>&#160;&#160;&#160;10</td></tr>
+<tr class="memdesc:a31e20330f8ce94e0dd10b005a15c5898"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pines de los LEDs indicadores.  <br /></td></tr>
+<tr class="memitem:aca338dbd19d7940923334629f6e5f3b7" id="r_aca338dbd19d7940923334629f6e5f3b7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aca338dbd19d7940923334629f6e5f3b7">LED_GREEN</a>&#160;&#160;&#160;9</td></tr>
+<tr class="memitem:ae2e40566d27689f8581d7b0f12271d45" id="r_ae2e40566d27689f8581d7b0f12271d45"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae2e40566d27689f8581d7b0f12271d45">LED_BLUE</a>&#160;&#160;&#160;8</td></tr>
+<tr class="memitem:abc2ad14f0789907024ac765711ffd3da" id="r_abc2ad14f0789907024ac765711ffd3da"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abc2ad14f0789907024ac765711ffd3da">BUTTON_PIN</a>&#160;&#160;&#160;6</td></tr>
+<tr class="memdesc:abc2ad14f0789907024ac765711ffd3da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pin de entrada para el botón.  <br /></td></tr>
 <tr class="memitem:a40b4fe45622d5b33767ead7735f354c4" id="r_a40b4fe45622d5b33767ead7735f354c4"><td class="memItemLeft" align="right" valign="top"><a id="a40b4fe45622d5b33767ead7735f354c4" name="a40b4fe45622d5b33767ead7735f354c4"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>beta</b>&#160;&#160;&#160;4090</td></tr>
+<tr class="memdesc:a40b4fe45622d5b33767ead7735f354c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constante beta utilizada en el cálculo de temperatura del sensor NTC. <br /></td></tr>
 <tr class="memitem:a39e6299c86c0479af64fd5ff6b1ca833" id="r_a39e6299c86c0479af64fd5ff6b1ca833"><td class="memItemLeft" align="right" valign="top"><a id="a39e6299c86c0479af64fd5ff6b1ca833" name="a39e6299c86c0479af64fd5ff6b1ca833"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>INFRA</b>&#160;&#160;&#160;15</td></tr>
-<tr class="memitem:a2c509dba12bba99883a5be9341b7a0c5" id="r_a2c509dba12bba99883a5be9341b7a0c5"><td class="memItemLeft" align="right" valign="top"><a id="a2c509dba12bba99883a5be9341b7a0c5" name="a2c509dba12bba99883a5be9341b7a0c5"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>DHTTYPE</b>&#160;&#160;&#160;DHT11</td></tr>
+<tr class="memdesc:a39e6299c86c0479af64fd5ff6b1ca833"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pin digital del sensor infrarrojo. <br /></td></tr>
+<tr class="memitem:a2c509dba12bba99883a5be9341b7a0c5" id="r_a2c509dba12bba99883a5be9341b7a0c5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2c509dba12bba99883a5be9341b7a0c5">DHTTYPE</a>&#160;&#160;&#160;DHT11</td></tr>
+<tr class="memdesc:a2c509dba12bba99883a5be9341b7a0c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tipo de sensor de temperatura y humedad utilizado.  <br /></td></tr>
 <tr class="memitem:a757bb4e2bff6148de6ef3989b32a0126" id="r_a757bb4e2bff6148de6ef3989b32a0126"><td class="memItemLeft" align="right" valign="top"><a id="a757bb4e2bff6148de6ef3989b32a0126" name="a757bb4e2bff6148de6ef3989b32a0126"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>DHTPIN</b>&#160;&#160;&#160;38</td></tr>
+<tr class="memdesc:a757bb4e2bff6148de6ef3989b32a0126"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pin del sensor DHT de temperatura y humedad. <br /></td></tr>
 <tr class="memitem:a75daabb2226536982e7cd233cd1e6f39" id="r_a75daabb2226536982e7cd233cd1e6f39"><td class="memItemLeft" align="right" valign="top"><a id="a75daabb2226536982e7cd233cd1e6f39" name="a75daabb2226536982e7cd233cd1e6f39"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>NOTE_B0</b>&#160;&#160;&#160;31</td></tr>
 <tr class="memitem:a3967a2d455ebdbe5e51db21bfb17fe85" id="r_a3967a2d455ebdbe5e51db21bfb17fe85"><td class="memItemLeft" align="right" valign="top"><a id="a3967a2d455ebdbe5e51db21bfb17fe85" name="a3967a2d455ebdbe5e51db21bfb17fe85"></a>
@@ -305,164 +320,148 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-enum-members" class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:a5d74787dedbc4e11c1ab15bf487e61f8" id="r_a5d74787dedbc4e11c1ab15bf487e61f8"><td class="memItemLeft" align="right" valign="top"><a id="a5d74787dedbc4e11c1ab15bf487e61f8" name="a5d74787dedbc4e11c1ab15bf487e61f8"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>State</b> { <br />
-&#160;&#160;<b>Inicio</b> = 0
-, <b>AlarmaRed</b> = 1
-, <b>MonitorAmbiental</b> = 2
-, <b>Bloqueo</b> = 3
+<tr class="memitem:a5d74787dedbc4e11c1ab15bf487e61f8" id="r_a5d74787dedbc4e11c1ab15bf487e61f8"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5d74787dedbc4e11c1ab15bf487e61f8">State</a> { <br />
+&#160;&#160;<a class="el" href="#a5d74787dedbc4e11c1ab15bf487e61f8a7429777ed105978c319dd77880e3854a">Inicio</a> = 0
+, <a class="el" href="#a5d74787dedbc4e11c1ab15bf487e61f8ac8f22abd5e82f836dbc3bee2361b9fe2">AlarmaRed</a> = 1
+, <a class="el" href="#a5d74787dedbc4e11c1ab15bf487e61f8a27065b1d10618b5ec21c484440657d45">MonitorAmbiental</a> = 2
+, <a class="el" href="#a5d74787dedbc4e11c1ab15bf487e61f8a0ea3f164381b6783fd29ed1552487147">Bloqueo</a> = 3
 , <br />
-&#160;&#160;<b>Alarma</b> = 4
-, <b>MonitorEventos</b> = 5
+&#160;&#160;<a class="el" href="#a5d74787dedbc4e11c1ab15bf487e61f8a5853b2d9804fc5a6d3d1948c978c6dcb">Alarma</a> = 4
+, <a class="el" href="#a5d74787dedbc4e11c1ab15bf487e61f8aac40392c8d00cac86ac30c30dbbc28ae">MonitorEventos</a> = 5
 <br />
  }</td></tr>
-<tr class="memitem:a080a822f0093973313bd644e517a5090" id="r_a080a822f0093973313bd644e517a5090"><td class="memItemLeft" align="right" valign="top"><a id="a080a822f0093973313bd644e517a5090" name="a080a822f0093973313bd644e517a5090"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>Input</b> { <br />
-&#160;&#160;<b>time</b> = 0
-, <b>claveCorrecta</b> = 1
-, <b>systemBlock</b> = 2
-, <b>btnPress</b> = 3
+<tr class="memdesc:a5d74787dedbc4e11c1ab15bf487e61f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Estados definidos en la máquina de estados.  <a href="#a5d74787dedbc4e11c1ab15bf487e61f8">More...</a><br /></td></tr>
+<tr class="memitem:a080a822f0093973313bd644e517a5090" id="r_a080a822f0093973313bd644e517a5090"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a080a822f0093973313bd644e517a5090">Input</a> { <br />
+&#160;&#160;<a class="el" href="#a080a822f0093973313bd644e517a5090a340e34ccdf26079f44b98a706bd61c9d">time</a> = 0
+, <a class="el" href="#a080a822f0093973313bd644e517a5090abda7e67e4a52f6bee40c1949024922cd">claveCorrecta</a> = 1
+, <a class="el" href="#a080a822f0093973313bd644e517a5090afec250bdd5d926f210bc64239f7bde95">systemBlock</a> = 2
+, <a class="el" href="#a080a822f0093973313bd644e517a5090a0e43a7c6c672ad2ca637e2c16fbef930">btnPress</a> = 3
 , <br />
-&#160;&#160;<b>hallExceeded</b> = 4
-, <b>tempLightExceeded</b> = 5
-, <b>infraZero</b> = 6
-, <b>sensores</b> = 7
+&#160;&#160;<a class="el" href="#a080a822f0093973313bd644e517a5090a0ecb68c818d7071f3e97f5360101cb20">hallExceeded</a> = 4
+, <a class="el" href="#a080a822f0093973313bd644e517a5090a6127b24a8433ecd1dd4c447a59373352">tempLightExceeded</a> = 5
+, <a class="el" href="#a080a822f0093973313bd644e517a5090afed086211b9b070683fc413fa3571074">infraZero</a> = 6
+, <a class="el" href="#a080a822f0093973313bd644e517a5090a5d59dc59a8cbefd4f79e58b6db8bb5e8">sensores</a> = 7
 , <br />
-&#160;&#160;<b>unknown</b> = 8
+&#160;&#160;<a class="el" href="#a080a822f0093973313bd644e517a5090a5b9f6d065e6e98483b3d3ed01f4f6cbe">unknown</a> = 8
 <br />
  }</td></tr>
+<tr class="memdesc:a080a822f0093973313bd644e517a5090"><td class="mdescLeft">&#160;</td><td class="mdescRight">Entradas posibles que controlan las transiciones entre estados.  <a href="#a080a822f0093973313bd644e517a5090">More...</a><br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a817f6545bce2c289122706845ed0894c" id="r_a817f6545bce2c289122706845ed0894c"><td class="memItemLeft" align="right" valign="top"><a id="a817f6545bce2c289122706845ed0894c" name="a817f6545bce2c289122706845ed0894c"></a>
 LiquidCrystal&#160;</td><td class="memItemRight" valign="bottom"><b>lcd</b> (<a class="el" href="#a6e17894d69614d24591844d4d934dd24">rs</a>, en, d4, d5, d6, d7)</td></tr>
 <tr class="memdesc:a817f6545bce2c289122706845ed0894c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Object to control the LCD screen. <br /></td></tr>
+<tr class="memitem:ac672f817299d07cc428fe3f456235273" id="r_ac672f817299d07cc428fe3f456235273"><td class="memItemLeft" align="right" valign="top"><a id="ac672f817299d07cc428fe3f456235273" name="ac672f817299d07cc428fe3f456235273"></a>
+MFRC522&#160;</td><td class="memItemRight" valign="bottom"><b>mfrc522</b> (<a class="el" href="#a86fac98c9b4c98a3e50fc45440878391">SS_PIN</a>, <a class="el" href="#a36932b0e869e0114f32e255f61306d6b">RST_PIN</a>)</td></tr>
+<tr class="memdesc:ac672f817299d07cc428fe3f456235273"><td class="mdescLeft">&#160;</td><td class="mdescRight">Objeto para controlar el módulo RFID RC522. <br /></td></tr>
+<tr class="memitem:a59284ce8f9a9bf013dbfed2be0a06b63" id="r_a59284ce8f9a9bf013dbfed2be0a06b63"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a59284ce8f9a9bf013dbfed2be0a06b63">setupRFID</a> ()</td></tr>
+<tr class="memdesc:a59284ce8f9a9bf013dbfed2be0a06b63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inicializa el módulo RFID MFRC522.  <br /></td></tr>
+<tr class="memitem:a954e38faa9405f0a332c185a58479f72" id="r_a954e38faa9405f0a332c185a58479f72"><td class="memItemLeft" align="right" valign="top">short&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a954e38faa9405f0a332c185a58479f72">readTarget</a> ()</td></tr>
+<tr class="memdesc:a954e38faa9405f0a332c185a58479f72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lee una tarjeta RFID y retorna su valor asignado.  <br /></td></tr>
+<tr class="memitem:a1b3c4fa5c2839b01f0e3e9c94c364cf5" id="r_a1b3c4fa5c2839b01f0e3e9c94c364cf5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1b3c4fa5c2839b01f0e3e9c94c364cf5">registerTarget</a> ()</td></tr>
+<tr class="memdesc:a1b3c4fa5c2839b01f0e3e9c94c364cf5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registra una nueva tarjeta RFID en el sistema.  <br /></td></tr>
+<tr class="memitem:a2940ebe54efe84944652355589b94b09" id="r_a2940ebe54efe84944652355589b94b09"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2940ebe54efe84944652355589b94b09">readPMV</a> ()</td></tr>
+<tr class="memdesc:a2940ebe54efe84944652355589b94b09"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lee el valor de una variable específica del sistema.  <br /></td></tr>
 <tr class="memitem:ad7a1df263f6f823242a112ec11297434" id="r_ad7a1df263f6f823242a112ec11297434"><td class="memItemLeft" align="right" valign="top"><a id="ad7a1df263f6f823242a112ec11297434" name="ad7a1df263f6f823242a112ec11297434"></a>
-DHT&#160;</td><td class="memItemRight" valign="bottom"><b>dht</b> (DHTPIN, DHTTYPE)</td></tr>
-<tr class="memitem:a4d2ec6fd3a1844c88c33f1521df53a1d" id="r_a4d2ec6fd3a1844c88c33f1521df53a1d"><td class="memItemLeft" align="right" valign="top"><a id="a4d2ec6fd3a1844c88c33f1521df53a1d" name="a4d2ec6fd3a1844c88c33f1521df53a1d"></a>
-StateMachine&#160;</td><td class="memItemRight" valign="bottom"><b>stateMachine</b> (6, 12)</td></tr>
-<tr class="memitem:a0f66d65ae208fa0a707755d77441dd5f" id="r_a0f66d65ae208fa0a707755d77441dd5f"><td class="memItemLeft" align="right" valign="top"><a id="a0f66d65ae208fa0a707755d77441dd5f" name="a0f66d65ae208fa0a707755d77441dd5f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setupStateMachine</b> ()</td></tr>
-<tr class="memitem:a2414e90aa7821f97d72d17167ca49eb7" id="r_a2414e90aa7821f97d72d17167ca49eb7"><td class="memItemLeft" align="right" valign="top"><a id="a2414e90aa7821f97d72d17167ca49eb7" name="a2414e90aa7821f97d72d17167ca49eb7"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>readLight</b> ()</td></tr>
-<tr class="memdesc:a2414e90aa7821f97d72d17167ca49eb7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read photoresistor sensor. <br /></td></tr>
-<tr class="memitem:a935a644f2f83fada63bde53d71d2c357" id="r_a935a644f2f83fada63bde53d71d2c357"><td class="memItemLeft" align="right" valign="top"><a id="a935a644f2f83fada63bde53d71d2c357" name="a935a644f2f83fada63bde53d71d2c357"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>readTemp</b> ()</td></tr>
-<tr class="memdesc:a935a644f2f83fada63bde53d71d2c357"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read temp from DHT sensor. <br /></td></tr>
-<tr class="memitem:a1cb769d91c39f0b9c6d7388277b1bbaa" id="r_a1cb769d91c39f0b9c6d7388277b1bbaa"><td class="memItemLeft" align="right" valign="top"><a id="a1cb769d91c39f0b9c6d7388277b1bbaa" name="a1cb769d91c39f0b9c6d7388277b1bbaa"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>readHum</b> ()</td></tr>
-<tr class="memdesc:a1cb769d91c39f0b9c6d7388277b1bbaa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read humedity from DHT sensor. <br /></td></tr>
-<tr class="memitem:a81c7b75337016da4b71b621f83d594c0" id="r_a81c7b75337016da4b71b621f83d594c0"><td class="memItemLeft" align="right" valign="top"><a id="a81c7b75337016da4b71b621f83d594c0" name="a81c7b75337016da4b71b621f83d594c0"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>readTime</b> (void)</td></tr>
-<tr class="memitem:ad0d3b4b3dbbdbe6d64633ca55fc43e8e" id="r_ad0d3b4b3dbbdbe6d64633ca55fc43e8e"><td class="memItemLeft" align="right" valign="top"><a id="ad0d3b4b3dbbdbe6d64633ca55fc43e8e" name="ad0d3b4b3dbbdbe6d64633ca55fc43e8e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>readHall</b> ()</td></tr>
-<tr class="memdesc:ad0d3b4b3dbbdbe6d64633ca55fc43e8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read hall sensor. <br /></td></tr>
-<tr class="memitem:a23836887e3f9300e6222178e335a5ca5" id="r_a23836887e3f9300e6222178e335a5ca5"><td class="memItemLeft" align="right" valign="top"><a id="a23836887e3f9300e6222178e335a5ca5" name="a23836887e3f9300e6222178e335a5ca5"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>readInfra</b> ()</td></tr>
-<tr class="memdesc:a23836887e3f9300e6222178e335a5ca5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read InfraRed input. <br /></td></tr>
-<tr class="memitem:a3a864b0ace7b5561936b913da3ace09c" id="r_a3a864b0ace7b5561936b913da3ace09c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3a864b0ace7b5561936b913da3ace09c">printSensorsLcd</a> ()</td></tr>
-<tr class="memdesc:a3a864b0ace7b5561936b913da3ace09c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints the sensor values on the LCD screen.  <br /></td></tr>
-<tr class="memitem:ad28c57857c0360f1b99b9aeaee0c4249" id="r_ad28c57857c0360f1b99b9aeaee0c4249"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad28c57857c0360f1b99b9aeaee0c4249">printEventosLcd</a> ()</td></tr>
-<tr class="memdesc:ad28c57857c0360f1b99b9aeaee0c4249"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints the hall and InfraRed sensor value on the LCD screen.  <br /></td></tr>
-<tr class="memitem:ad8f842baa6f608ce4538ae215b0ed116" id="r_ad8f842baa6f608ce4538ae215b0ed116"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad8f842baa6f608ce4538ae215b0ed116">verifyTempLightLimits</a> ()</td></tr>
-<tr class="memdesc:ad8f842baa6f608ce4538ae215b0ed116"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verifies if the temperature limits are exceeded.  <br /></td></tr>
-<tr class="memitem:affe9739dec91f3e1073697c086595591" id="r_affe9739dec91f3e1073697c086595591"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#affe9739dec91f3e1073697c086595591">verifyHallLimit</a> ()</td></tr>
-<tr class="memdesc:affe9739dec91f3e1073697c086595591"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verifies if the hall sensor limit is exceeded.  <br /></td></tr>
-<tr class="memitem:afe62d1aa4c77687ac79a19480940652a" id="r_afe62d1aa4c77687ac79a19480940652a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afe62d1aa4c77687ac79a19480940652a">readBluelight</a> ()</td></tr>
-<tr class="memdesc:afe62d1aa4c77687ac79a19480940652a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Activates the blue light and displays an alarm message on the LCD screen.  <br /></td></tr>
-<tr class="memitem:a5bb8d38158d73e157e2f9ddcd7e9257c" id="r_a5bb8d38158d73e157e2f9ddcd7e9257c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5bb8d38158d73e157e2f9ddcd7e9257c">readRedlight</a> ()</td></tr>
-<tr class="memdesc:a5bb8d38158d73e157e2f9ddcd7e9257c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Activates the blue light and displays an alarm message on the LCD screen.  <br /></td></tr>
-<tr class="memitem:a797da1c93a3b2797e7d236afa416c4ca" id="r_a797da1c93a3b2797e7d236afa416c4ca"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a797da1c93a3b2797e7d236afa416c4ca">melodyExecutable</a> ()</td></tr>
-<tr class="memdesc:a797da1c93a3b2797e7d236afa416c4ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plays the melody for a successful operation.  <br /></td></tr>
-<tr class="memitem:a716c6f31b2c75d1944aaa3b6a7da5be0" id="r_a716c6f31b2c75d1944aaa3b6a7da5be0"><td class="memItemLeft" align="right" valign="top"><a id="a716c6f31b2c75d1944aaa3b6a7da5be0" name="a716c6f31b2c75d1944aaa3b6a7da5be0"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>readButton</b> ()</td></tr>
-<tr class="memdesc:a716c6f31b2c75d1944aaa3b6a7da5be0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read button input. <br /></td></tr>
-<tr class="memitem:a2c018b07f320da4371811bb498b61a82" id="r_a2c018b07f320da4371811bb498b61a82"><td class="memItemLeft" align="right" valign="top"><a id="a2c018b07f320da4371811bb498b61a82" name="a2c018b07f320da4371811bb498b61a82"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>seguridad</b> ()</td></tr>
-<tr class="memdesc:a2c018b07f320da4371811bb498b61a82"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles reading the password entered by the user. <br /></td></tr>
-<tr class="memitem:a95dff096b1e5aba5529008c9e32ce8fa" id="r_a95dff096b1e5aba5529008c9e32ce8fa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a95dff096b1e5aba5529008c9e32ce8fa">failMelody</a> ()</td></tr>
-<tr class="memdesc:a95dff096b1e5aba5529008c9e32ce8fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plays the melody for a failed operation.  <br /></td></tr>
-<tr class="memitem:ae21538b2c217ad471b2ea263c036c56a" id="r_ae21538b2c217ad471b2ea263c036c56a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae21538b2c217ad471b2ea263c036c56a">successMelody</a> ()</td></tr>
-<tr class="memdesc:ae21538b2c217ad471b2ea263c036c56a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plays the melody for a successful operation.  <br /></td></tr>
-<tr class="memitem:a7cfac74ed9b34c907bedca0c53e5d0c4" id="r_a7cfac74ed9b34c907bedca0c53e5d0c4"><td class="memItemLeft" align="right" valign="top"><a id="a7cfac74ed9b34c907bedca0c53e5d0c4" name="a7cfac74ed9b34c907bedca0c53e5d0c4"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>sisBloqueado</b> ()</td></tr>
-<tr class="memdesc:a7cfac74ed9b34c907bedca0c53e5d0c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">System blocked function. <br /></td></tr>
-<tr class="memitem:a656f1cefb025bbb439224bc4dd910d91" id="r_a656f1cefb025bbb439224bc4dd910d91"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a656f1cefb025bbb439224bc4dd910d91">verifyInfraLimit</a> ()</td></tr>
-<tr class="memdesc:a656f1cefb025bbb439224bc4dd910d91"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verifies if the Infrared sensor is activated.  <br /></td></tr>
-<tr class="memitem:a99b5c5ce9ad44625c550694471a6f2eb" id="r_a99b5c5ce9ad44625c550694471a6f2eb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a99b5c5ce9ad44625c550694471a6f2eb">resetAlarmCount</a> ()</td></tr>
-<tr class="memdesc:a99b5c5ce9ad44625c550694471a6f2eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset alarm Count.  <br /></td></tr>
-<tr class="memitem:ad2fad14507513b513d2b9a0339fc7e6f" id="r_ad2fad14507513b513d2b9a0339fc7e6f"><td class="memItemLeft" align="right" valign="top"><a id="ad2fad14507513b513d2b9a0339fc7e6f" name="ad2fad14507513b513d2b9a0339fc7e6f"></a>
-AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><b>taskReadLight</b> (1000, true, <a class="el" href="#a2414e90aa7821f97d72d17167ca49eb7">readLight</a>)</td></tr>
-<tr class="memitem:acc86f8cf61a8468bdda667e166f51e35" id="r_acc86f8cf61a8468bdda667e166f51e35"><td class="memItemLeft" align="right" valign="top"><a id="acc86f8cf61a8468bdda667e166f51e35" name="acc86f8cf61a8468bdda667e166f51e35"></a>
-AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><b>taskReadTemp</b> (1000, true, <a class="el" href="#a935a644f2f83fada63bde53d71d2c357">readTemp</a>)</td></tr>
-<tr class="memitem:a71cc905cc1e853c92cb27573519f19c3" id="r_a71cc905cc1e853c92cb27573519f19c3"><td class="memItemLeft" align="right" valign="top"><a id="a71cc905cc1e853c92cb27573519f19c3" name="a71cc905cc1e853c92cb27573519f19c3"></a>
-AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><b>taskReadHum</b> (1000, true, <a class="el" href="#a1cb769d91c39f0b9c6d7388277b1bbaa">readHum</a>)</td></tr>
-<tr class="memitem:ac2de211b819b5898024e47412a376653" id="r_ac2de211b819b5898024e47412a376653"><td class="memItemLeft" align="right" valign="top"><a id="ac2de211b819b5898024e47412a376653" name="ac2de211b819b5898024e47412a376653"></a>
-AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><b>taskReadHall</b> (1000, true, <a class="el" href="#ad0d3b4b3dbbdbe6d64633ca55fc43e8e">readHall</a>)</td></tr>
-<tr class="memitem:a79cb6e5d7d3396d25911a87f4ee9cacf" id="r_a79cb6e5d7d3396d25911a87f4ee9cacf"><td class="memItemLeft" align="right" valign="top"><a id="a79cb6e5d7d3396d25911a87f4ee9cacf" name="a79cb6e5d7d3396d25911a87f4ee9cacf"></a>
-AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><b>taskReadInfra</b> (1000, true, <a class="el" href="#a23836887e3f9300e6222178e335a5ca5">readInfra</a>)</td></tr>
-<tr class="memitem:a91307b37b60c63d642a1d4751209f741" id="r_a91307b37b60c63d642a1d4751209f741"><td class="memItemLeft" align="right" valign="top"><a id="a91307b37b60c63d642a1d4751209f741" name="a91307b37b60c63d642a1d4751209f741"></a>
-AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><b>taskSetTime</b> (10000, true, readTime)</td></tr>
-<tr class="memitem:adaa579cb7baf8804a5b39a1ab702a042" id="r_adaa579cb7baf8804a5b39a1ab702a042"><td class="memItemLeft" align="right" valign="top"><a id="adaa579cb7baf8804a5b39a1ab702a042" name="adaa579cb7baf8804a5b39a1ab702a042"></a>
-AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><b>taskPrintLcd</b> (1000, true, <a class="el" href="#a3a864b0ace7b5561936b913da3ace09c">printSensorsLcd</a>)</td></tr>
-<tr class="memitem:adcc47f609c1cd0acb86cfe79a0ed376c" id="r_adcc47f609c1cd0acb86cfe79a0ed376c"><td class="memItemLeft" align="right" valign="top"><a id="adcc47f609c1cd0acb86cfe79a0ed376c" name="adcc47f609c1cd0acb86cfe79a0ed376c"></a>
-AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><b>taskPrintEventosLcd</b> (1000, true, <a class="el" href="#ad28c57857c0360f1b99b9aeaee0c4249">printEventosLcd</a>)</td></tr>
-<tr class="memitem:a7cc4eb20fbccc33f42e313fa7df5be7d" id="r_a7cc4eb20fbccc33f42e313fa7df5be7d"><td class="memItemLeft" align="right" valign="top"><a id="a7cc4eb20fbccc33f42e313fa7df5be7d" name="a7cc4eb20fbccc33f42e313fa7df5be7d"></a>
-AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><b>taskTempLightLimits</b> (1000, true, <a class="el" href="#ad8f842baa6f608ce4538ae215b0ed116">verifyTempLightLimits</a>)</td></tr>
-<tr class="memitem:ad3c6ed6f67fe7c1af6f8cce64c251542" id="r_ad3c6ed6f67fe7c1af6f8cce64c251542"><td class="memItemLeft" align="right" valign="top"><a id="ad3c6ed6f67fe7c1af6f8cce64c251542" name="ad3c6ed6f67fe7c1af6f8cce64c251542"></a>
-AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><b>taskHallLimits</b> (1000, true, <a class="el" href="#affe9739dec91f3e1073697c086595591">verifyHallLimit</a>)</td></tr>
-<tr class="memitem:a1d043e5a9d9244c2c2d51a149add760a" id="r_a1d043e5a9d9244c2c2d51a149add760a"><td class="memItemLeft" align="right" valign="top"><a id="a1d043e5a9d9244c2c2d51a149add760a" name="a1d043e5a9d9244c2c2d51a149add760a"></a>
-AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><b>taskInfraAct</b> (1000, true, <a class="el" href="#a656f1cefb025bbb439224bc4dd910d91">verifyInfraLimit</a>)</td></tr>
-<tr class="memitem:ac5d0fc29860057dbc96e5963dcd3aecc" id="r_ac5d0fc29860057dbc96e5963dcd3aecc"><td class="memItemLeft" align="right" valign="top"><a id="ac5d0fc29860057dbc96e5963dcd3aecc" name="ac5d0fc29860057dbc96e5963dcd3aecc"></a>
-AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><b>taskBlueLight</b> (400, true, <a class="el" href="#afe62d1aa4c77687ac79a19480940652a">readBluelight</a>)</td></tr>
-<tr class="memitem:a490f65f2ebb36db19eff58ce79336624" id="r_a490f65f2ebb36db19eff58ce79336624"><td class="memItemLeft" align="right" valign="top"><a id="a490f65f2ebb36db19eff58ce79336624" name="a490f65f2ebb36db19eff58ce79336624"></a>
-AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><b>taskRedLight</b> (400, true, <a class="el" href="#a5bb8d38158d73e157e2f9ddcd7e9257c">readRedlight</a>)</td></tr>
-<tr class="memitem:a0cca4621b2fd4420a252445f877fb884" id="r_a0cca4621b2fd4420a252445f877fb884"><td class="memItemLeft" align="right" valign="top"><a id="a0cca4621b2fd4420a252445f877fb884" name="a0cca4621b2fd4420a252445f877fb884"></a>
-AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><b>taskMelody</b> (800, false, <a class="el" href="#a797da1c93a3b2797e7d236afa416c4ca">melodyExecutable</a>)</td></tr>
-<tr class="memitem:ade46c88eba23a6e30aba9ff3abc51d9d" id="r_ade46c88eba23a6e30aba9ff3abc51d9d"><td class="memItemLeft" align="right" valign="top"><a id="ade46c88eba23a6e30aba9ff3abc51d9d" name="ade46c88eba23a6e30aba9ff3abc51d9d"></a>
-AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><b>taskReadButton</b> (100, true, <a class="el" href="#a716c6f31b2c75d1944aaa3b6a7da5be0">readButton</a>)</td></tr>
-<tr class="memitem:a7f87e069bbc40f10f9a4d376a3603a85" id="r_a7f87e069bbc40f10f9a4d376a3603a85"><td class="memItemLeft" align="right" valign="top"><a id="a7f87e069bbc40f10f9a4d376a3603a85" name="a7f87e069bbc40f10f9a4d376a3603a85"></a>
-AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><b>taskSecurity</b> (1000, false, <a class="el" href="#a2c018b07f320da4371811bb498b61a82">seguridad</a>)</td></tr>
-<tr class="memitem:a444b04ea9165e123f1faf989aae249fc" id="r_a444b04ea9165e123f1faf989aae249fc"><td class="memItemLeft" align="right" valign="top"><a id="a444b04ea9165e123f1faf989aae249fc" name="a444b04ea9165e123f1faf989aae249fc"></a>
-AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><b>taskMelodyFail</b> (800, false, <a class="el" href="#a95dff096b1e5aba5529008c9e32ce8fa">failMelody</a>)</td></tr>
-<tr class="memitem:aea07ee33b5396d48fecaff862b955264" id="r_aea07ee33b5396d48fecaff862b955264"><td class="memItemLeft" align="right" valign="top"><a id="aea07ee33b5396d48fecaff862b955264" name="aea07ee33b5396d48fecaff862b955264"></a>
-AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><b>taskMelodySuccess</b> (800, false, <a class="el" href="#ae21538b2c217ad471b2ea263c036c56a">successMelody</a>)</td></tr>
-<tr class="memitem:a213c22e45c96fcfd502f2a25f8a91e7c" id="r_a213c22e45c96fcfd502f2a25f8a91e7c"><td class="memItemLeft" align="right" valign="top"><a id="a213c22e45c96fcfd502f2a25f8a91e7c" name="a213c22e45c96fcfd502f2a25f8a91e7c"></a>
-AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><b>taskBloqueo</b> (500, false, <a class="el" href="#a7cfac74ed9b34c907bedca0c53e5d0c4">sisBloqueado</a>)</td></tr>
-<tr class="memitem:a4fc01d736fe50cf5b977f755b675f11d" id="r_a4fc01d736fe50cf5b977f755b675f11d"><td class="memItemLeft" align="right" valign="top"><a id="a4fc01d736fe50cf5b977f755b675f11d" name="a4fc01d736fe50cf5b977f755b675f11d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setup</b> ()</td></tr>
-<tr class="memdesc:a4fc01d736fe50cf5b977f755b675f11d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the system and its components. <br /></td></tr>
-<tr class="memitem:afe461d27b9c48d5921c00d521181f12f" id="r_afe461d27b9c48d5921c00d521181f12f"><td class="memItemLeft" align="right" valign="top"><a id="afe461d27b9c48d5921c00d521181f12f" name="afe461d27b9c48d5921c00d521181f12f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>loop</b> ()</td></tr>
-<tr class="memdesc:afe461d27b9c48d5921c00d521181f12f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main loop of the system, executes repetitive logic. <br /></td></tr>
-<tr class="memitem:a390833d0072e6440c9707a25c053dfb3" id="r_a390833d0072e6440c9707a25c053dfb3"><td class="memItemLeft" align="right" valign="top"><a id="a390833d0072e6440c9707a25c053dfb3" name="a390833d0072e6440c9707a25c053dfb3"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>outputInicio</b> ()</td></tr>
-<tr class="memitem:a3b64b265de658a850b70593cbd078c73" id="r_a3b64b265de658a850b70593cbd078c73"><td class="memItemLeft" align="right" valign="top"><a id="a3b64b265de658a850b70593cbd078c73" name="a3b64b265de658a850b70593cbd078c73"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>outputMAmbiental</b> ()</td></tr>
-<tr class="memitem:ae7f7255177511950ea5ff9086d20a9ef" id="r_ae7f7255177511950ea5ff9086d20a9ef"><td class="memItemLeft" align="right" valign="top"><a id="ae7f7255177511950ea5ff9086d20a9ef" name="ae7f7255177511950ea5ff9086d20a9ef"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>outputBloqueo</b> ()</td></tr>
-<tr class="memitem:aab9c5b060d49c9eae5717f5303a1984d" id="r_aab9c5b060d49c9eae5717f5303a1984d"><td class="memItemLeft" align="right" valign="top"><a id="aab9c5b060d49c9eae5717f5303a1984d" name="aab9c5b060d49c9eae5717f5303a1984d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>outputAlarma</b> ()</td></tr>
-<tr class="memitem:a7131b3416e5abd8e0fc3d76f399ef2a7" id="r_a7131b3416e5abd8e0fc3d76f399ef2a7"><td class="memItemLeft" align="right" valign="top"><a id="a7131b3416e5abd8e0fc3d76f399ef2a7" name="a7131b3416e5abd8e0fc3d76f399ef2a7"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>outputAlarmaRed</b> ()</td></tr>
-<tr class="memitem:a75cf38a436812a027332067cad2c2a55" id="r_a75cf38a436812a027332067cad2c2a55"><td class="memItemLeft" align="right" valign="top"><a id="a75cf38a436812a027332067cad2c2a55" name="a75cf38a436812a027332067cad2c2a55"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>outputMEventos</b> ()</td></tr>
-<tr class="memitem:adb1596ab0791393080cb3ad5372c36c5" id="r_adb1596ab0791393080cb3ad5372c36c5"><td class="memItemLeft" align="right" valign="top"><a id="adb1596ab0791393080cb3ad5372c36c5" name="adb1596ab0791393080cb3ad5372c36c5"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>leavingInicio</b> ()</td></tr>
-<tr class="memitem:a4fc93deb0172ff2e6ace163b32ce1b94" id="r_a4fc93deb0172ff2e6ace163b32ce1b94"><td class="memItemLeft" align="right" valign="top"><a id="a4fc93deb0172ff2e6ace163b32ce1b94" name="a4fc93deb0172ff2e6ace163b32ce1b94"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>leavingAmbiental</b> ()</td></tr>
-<tr class="memitem:ac64caf9be4457ff753ce6899ba860133" id="r_ac64caf9be4457ff753ce6899ba860133"><td class="memItemLeft" align="right" valign="top"><a id="ac64caf9be4457ff753ce6899ba860133" name="ac64caf9be4457ff753ce6899ba860133"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>leavingBloqueo</b> ()</td></tr>
-<tr class="memitem:a573f2761e3b9df7871acae505f73bf66" id="r_a573f2761e3b9df7871acae505f73bf66"><td class="memItemLeft" align="right" valign="top"><a id="a573f2761e3b9df7871acae505f73bf66" name="a573f2761e3b9df7871acae505f73bf66"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>leavingAlarma</b> ()</td></tr>
-<tr class="memitem:a925ceb72f88fdcde2c4e8eb7bca28dc7" id="r_a925ceb72f88fdcde2c4e8eb7bca28dc7"><td class="memItemLeft" align="right" valign="top"><a id="a925ceb72f88fdcde2c4e8eb7bca28dc7" name="a925ceb72f88fdcde2c4e8eb7bca28dc7"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>leavingAlarmaRed</b> ()</td></tr>
-<tr class="memitem:a953cfc9dea5c65b30aa125ae96867cfb" id="r_a953cfc9dea5c65b30aa125ae96867cfb"><td class="memItemLeft" align="right" valign="top"><a id="a953cfc9dea5c65b30aa125ae96867cfb" name="a953cfc9dea5c65b30aa125ae96867cfb"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>leavingEventos</b> ()</td></tr>
-<tr class="memitem:a941768364650a2b2b243661f317684d5" id="r_a941768364650a2b2b243661f317684d5"><td class="memItemLeft" align="right" valign="top"><a id="a941768364650a2b2b243661f317684d5" name="a941768364650a2b2b243661f317684d5"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>comparar</b> (char vector1[], char vector2[], int longitud)</td></tr>
-<tr class="memdesc:a941768364650a2b2b243661f317684d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare char vectors. <br /></td></tr>
-<tr class="memitem:a21a92ae381482abd260238eb23e1b685" id="r_a21a92ae381482abd260238eb23e1b685"><td class="memItemLeft" align="right" valign="top"><a id="a21a92ae381482abd260238eb23e1b685" name="a21a92ae381482abd260238eb23e1b685"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>claCorrecta</b> ()</td></tr>
-<tr class="memdesc:a21a92ae381482abd260238eb23e1b685"><td class="mdescLeft">&#160;</td><td class="mdescRight">Visual function for correct password. <br /></td></tr>
+DHT&#160;</td><td class="memItemRight" valign="bottom"><b>dht</b> (<a class="el" href="#a757bb4e2bff6148de6ef3989b32a0126">DHTPIN</a>, <a class="el" href="#a2c509dba12bba99883a5be9341b7a0c5">DHTTYPE</a>)</td></tr>
+<tr class="memdesc:ad7a1df263f6f823242a112ec11297434"><td class="mdescLeft">&#160;</td><td class="mdescRight">Objeto del sensor DHT para obtener mediciones de temperatura y humedad. <br /></td></tr>
+<tr class="memitem:a4d2ec6fd3a1844c88c33f1521df53a1d" id="r_a4d2ec6fd3a1844c88c33f1521df53a1d"><td class="memItemLeft" align="right" valign="top">StateMachine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d2ec6fd3a1844c88c33f1521df53a1d">stateMachine</a> (6, 12)</td></tr>
+<tr class="memdesc:a4d2ec6fd3a1844c88c33f1521df53a1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Objeto principal de la máquina de estados.  <br /></td></tr>
+<tr class="memitem:a0f66d65ae208fa0a707755d77441dd5f" id="r_a0f66d65ae208fa0a707755d77441dd5f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0f66d65ae208fa0a707755d77441dd5f">setupStateMachine</a> ()</td></tr>
+<tr class="memdesc:a0f66d65ae208fa0a707755d77441dd5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configura la máquina de estados del sistema.  <br /></td></tr>
+<tr class="memitem:ab6093d341506a46f4e859c24287f7c2a" id="r_ab6093d341506a46f4e859c24287f7c2a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab6093d341506a46f4e859c24287f7c2a">readLight</a> (void)</td></tr>
+<tr class="memdesc:ab6093d341506a46f4e859c24287f7c2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lee el valor del sensor de luz y actualiza la variable correspondiente.  <br /></td></tr>
+<tr class="memitem:a9f7e4fd61f32e03b0d08616bccb066de" id="r_a9f7e4fd61f32e03b0d08616bccb066de"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9f7e4fd61f32e03b0d08616bccb066de">readTemp</a> (void)</td></tr>
+<tr class="memdesc:a9f7e4fd61f32e03b0d08616bccb066de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lee el valor del sensor de temperatura (NTC o DHT) y lo almacena.  <br /></td></tr>
+<tr class="memitem:a04d12c84af80cf74600b2255f3e382d1" id="r_a04d12c84af80cf74600b2255f3e382d1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a04d12c84af80cf74600b2255f3e382d1">readHum</a> (void)</td></tr>
+<tr class="memdesc:a04d12c84af80cf74600b2255f3e382d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lee el valor de humedad desde el sensor DHT.  <br /></td></tr>
+<tr class="memitem:a81c7b75337016da4b71b621f83d594c0" id="r_a81c7b75337016da4b71b621f83d594c0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a81c7b75337016da4b71b621f83d594c0">readTime</a> (void)</td></tr>
+<tr class="memdesc:a81c7b75337016da4b71b621f83d594c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Actualiza el reloj interno o el control de tiempo de la FSM.  <br /></td></tr>
+<tr class="memitem:a4cccd36d6ab97de0d6f11679028ffb7f" id="r_a4cccd36d6ab97de0d6f11679028ffb7f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4cccd36d6ab97de0d6f11679028ffb7f">readHall</a> (void)</td></tr>
+<tr class="memdesc:a4cccd36d6ab97de0d6f11679028ffb7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lee el valor del sensor de efecto Hall.  <br /></td></tr>
+<tr class="memitem:a659e340500031c5d081f22ff875a10b8" id="r_a659e340500031c5d081f22ff875a10b8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a659e340500031c5d081f22ff875a10b8">readInfra</a> (void)</td></tr>
+<tr class="memdesc:a659e340500031c5d081f22ff875a10b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lee el estado del sensor infrarrojo.  <br /></td></tr>
+<tr class="memitem:a30b808802c793c08428a88e57bd780f3" id="r_a30b808802c793c08428a88e57bd780f3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a30b808802c793c08428a88e57bd780f3">printSensorsLcd</a> (void)</td></tr>
+<tr class="memdesc:a30b808802c793c08428a88e57bd780f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Muestra en pantalla los datos de los sensores ambientales.  <br /></td></tr>
+<tr class="memitem:a4ab48e0867885aa42fb60b0fbc012bdb" id="r_a4ab48e0867885aa42fb60b0fbc012bdb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4ab48e0867885aa42fb60b0fbc012bdb">printEventosLcd</a> (void)</td></tr>
+<tr class="memdesc:a4ab48e0867885aa42fb60b0fbc012bdb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Muestra en pantalla información relacionada con eventos del sistema.  <br /></td></tr>
+<tr class="memitem:a07e0305a2db088623fb7e9b11114c5f0" id="r_a07e0305a2db088623fb7e9b11114c5f0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a07e0305a2db088623fb7e9b11114c5f0">verifyTempLightLimits</a> (void)</td></tr>
+<tr class="memdesc:a07e0305a2db088623fb7e9b11114c5f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verifica si los valores de temperatura y luz exceden los umbrales.  <br /></td></tr>
+<tr class="memitem:a3a09ad03707522fd0b26cc634fcd36c3" id="r_a3a09ad03707522fd0b26cc634fcd36c3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3a09ad03707522fd0b26cc634fcd36c3">verifyHallLimit</a> (void)</td></tr>
+<tr class="memdesc:a3a09ad03707522fd0b26cc634fcd36c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verifica si el valor del sensor Hall supera el límite permitido.  <br /></td></tr>
+<tr class="memitem:acf1ac06366948d067088590143368691" id="r_acf1ac06366948d067088590143368691"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acf1ac06366948d067088590143368691">readBluelight</a> (void)</td></tr>
+<tr class="memdesc:acf1ac06366948d067088590143368691"><td class="mdescLeft">&#160;</td><td class="mdescRight">Controla la activación de la luz azul de retroalimentación.  <br /></td></tr>
+<tr class="memitem:ae1da010212562ae696ab167800d5d77e" id="r_ae1da010212562ae696ab167800d5d77e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae1da010212562ae696ab167800d5d77e">readRedlight</a> (void)</td></tr>
+<tr class="memdesc:ae1da010212562ae696ab167800d5d77e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Controla la activación de la luz roja de advertencia.  <br /></td></tr>
+<tr class="memitem:ab237cf233c439d830f2a5b9ac479c35b" id="r_ab237cf233c439d830f2a5b9ac479c35b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab237cf233c439d830f2a5b9ac479c35b">melodyExecutable</a> (void)</td></tr>
+<tr class="memdesc:ab237cf233c439d830f2a5b9ac479c35b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ejecuta la reproducción de una melodía desde la cola de acciones.  <br /></td></tr>
+<tr class="memitem:a564c61ed91865edf885ca15ea6158e21" id="r_a564c61ed91865edf885ca15ea6158e21"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a564c61ed91865edf885ca15ea6158e21">readButton</a> (void)</td></tr>
+<tr class="memdesc:a564c61ed91865edf885ca15ea6158e21"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lee el estado del botón físico del sistema.  <br /></td></tr>
+<tr class="memitem:a5883e2c9d55def93387501c2a17c1a41" id="r_a5883e2c9d55def93387501c2a17c1a41"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5883e2c9d55def93387501c2a17c1a41">seguridad</a> (void)</td></tr>
+<tr class="memdesc:a5883e2c9d55def93387501c2a17c1a41"><td class="mdescLeft">&#160;</td><td class="mdescRight">Control de seguridad para validar el acceso por contraseña.  <br /></td></tr>
+<tr class="memitem:a138a5df6fd93cd0d4920195c4b9e7ee5" id="r_a138a5df6fd93cd0d4920195c4b9e7ee5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a138a5df6fd93cd0d4920195c4b9e7ee5">failMelody</a> (void)</td></tr>
+<tr class="memdesc:a138a5df6fd93cd0d4920195c4b9e7ee5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reproduce una melodía de error o fallo.  <br /></td></tr>
+<tr class="memitem:a4d97e660d0bc81893106854d12f07a6a" id="r_a4d97e660d0bc81893106854d12f07a6a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d97e660d0bc81893106854d12f07a6a">successMelody</a> (void)</td></tr>
+<tr class="memdesc:a4d97e660d0bc81893106854d12f07a6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reproduce una melodía de confirmación de éxito.  <br /></td></tr>
+<tr class="memitem:a255cd17346e3810e05deecd13b5b273a" id="r_a255cd17346e3810e05deecd13b5b273a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a255cd17346e3810e05deecd13b5b273a">sisBloqueado</a> (void)</td></tr>
+<tr class="memdesc:a255cd17346e3810e05deecd13b5b273a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ejecuta la rutina visual y sonora del estado de bloqueo.  <br /></td></tr>
+<tr class="memitem:a97c68f9d61cfebbd696391e4c010ce05" id="r_a97c68f9d61cfebbd696391e4c010ce05"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a97c68f9d61cfebbd696391e4c010ce05">verifyInfraLimit</a> (void)</td></tr>
+<tr class="memdesc:a97c68f9d61cfebbd696391e4c010ce05"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verifica si la señal infrarroja indica un evento anómalo.  <br /></td></tr>
+<tr class="memitem:a4dd71cdad15e494749af703339f49935" id="r_a4dd71cdad15e494749af703339f49935"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4dd71cdad15e494749af703339f49935">resetAlarmCount</a> (void)</td></tr>
+<tr class="memdesc:a4dd71cdad15e494749af703339f49935"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reinicia el contador de alarmas acumuladas.  <br /></td></tr>
+<tr class="memitem:ad2fad14507513b513d2b9a0339fc7e6f" id="r_ad2fad14507513b513d2b9a0339fc7e6f"><td class="memItemLeft" align="right" valign="top">AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad2fad14507513b513d2b9a0339fc7e6f">taskReadLight</a> (1000, true, <a class="el" href="#ab6093d341506a46f4e859c24287f7c2a">readLight</a>)</td></tr>
+<tr class="memdesc:ad2fad14507513b513d2b9a0339fc7e6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tareas asincrónicas que gestionan el sistema en tiempo real.  <br /></td></tr>
+<tr class="memitem:acc86f8cf61a8468bdda667e166f51e35" id="r_acc86f8cf61a8468bdda667e166f51e35"><td class="memItemLeft" align="right" valign="top">AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acc86f8cf61a8468bdda667e166f51e35">taskReadTemp</a> (1000, true, <a class="el" href="#a9f7e4fd61f32e03b0d08616bccb066de">readTemp</a>)</td></tr>
+<tr class="memitem:a71cc905cc1e853c92cb27573519f19c3" id="r_a71cc905cc1e853c92cb27573519f19c3"><td class="memItemLeft" align="right" valign="top">AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a71cc905cc1e853c92cb27573519f19c3">taskReadHum</a> (1000, true, <a class="el" href="#a04d12c84af80cf74600b2255f3e382d1">readHum</a>)</td></tr>
+<tr class="memitem:ac2de211b819b5898024e47412a376653" id="r_ac2de211b819b5898024e47412a376653"><td class="memItemLeft" align="right" valign="top">AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac2de211b819b5898024e47412a376653">taskReadHall</a> (1000, true, <a class="el" href="#a4cccd36d6ab97de0d6f11679028ffb7f">readHall</a>)</td></tr>
+<tr class="memitem:a79cb6e5d7d3396d25911a87f4ee9cacf" id="r_a79cb6e5d7d3396d25911a87f4ee9cacf"><td class="memItemLeft" align="right" valign="top">AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a79cb6e5d7d3396d25911a87f4ee9cacf">taskReadInfra</a> (1000, true, <a class="el" href="#a659e340500031c5d081f22ff875a10b8">readInfra</a>)</td></tr>
+<tr class="memitem:a91307b37b60c63d642a1d4751209f741" id="r_a91307b37b60c63d642a1d4751209f741"><td class="memItemLeft" align="right" valign="top">AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a91307b37b60c63d642a1d4751209f741">taskSetTime</a> (10000, true, <a class="el" href="#a81c7b75337016da4b71b621f83d594c0">readTime</a>)</td></tr>
+<tr class="memitem:adaa579cb7baf8804a5b39a1ab702a042" id="r_adaa579cb7baf8804a5b39a1ab702a042"><td class="memItemLeft" align="right" valign="top">AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adaa579cb7baf8804a5b39a1ab702a042">taskPrintLcd</a> (1000, true, <a class="el" href="#a30b808802c793c08428a88e57bd780f3">printSensorsLcd</a>)</td></tr>
+<tr class="memitem:adcc47f609c1cd0acb86cfe79a0ed376c" id="r_adcc47f609c1cd0acb86cfe79a0ed376c"><td class="memItemLeft" align="right" valign="top">AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adcc47f609c1cd0acb86cfe79a0ed376c">taskPrintEventosLcd</a> (1000, true, <a class="el" href="#a4ab48e0867885aa42fb60b0fbc012bdb">printEventosLcd</a>)</td></tr>
+<tr class="memitem:a7cc4eb20fbccc33f42e313fa7df5be7d" id="r_a7cc4eb20fbccc33f42e313fa7df5be7d"><td class="memItemLeft" align="right" valign="top">AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7cc4eb20fbccc33f42e313fa7df5be7d">taskTempLightLimits</a> (1000, true, <a class="el" href="#a07e0305a2db088623fb7e9b11114c5f0">verifyTempLightLimits</a>)</td></tr>
+<tr class="memitem:ad3c6ed6f67fe7c1af6f8cce64c251542" id="r_ad3c6ed6f67fe7c1af6f8cce64c251542"><td class="memItemLeft" align="right" valign="top">AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad3c6ed6f67fe7c1af6f8cce64c251542">taskHallLimits</a> (1000, true, <a class="el" href="#a3a09ad03707522fd0b26cc634fcd36c3">verifyHallLimit</a>)</td></tr>
+<tr class="memitem:a1d043e5a9d9244c2c2d51a149add760a" id="r_a1d043e5a9d9244c2c2d51a149add760a"><td class="memItemLeft" align="right" valign="top">AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1d043e5a9d9244c2c2d51a149add760a">taskInfraAct</a> (1000, true, <a class="el" href="#a97c68f9d61cfebbd696391e4c010ce05">verifyInfraLimit</a>)</td></tr>
+<tr class="memitem:ac5d0fc29860057dbc96e5963dcd3aecc" id="r_ac5d0fc29860057dbc96e5963dcd3aecc"><td class="memItemLeft" align="right" valign="top">AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac5d0fc29860057dbc96e5963dcd3aecc">taskBlueLight</a> (400, true, <a class="el" href="#acf1ac06366948d067088590143368691">readBluelight</a>)</td></tr>
+<tr class="memitem:a490f65f2ebb36db19eff58ce79336624" id="r_a490f65f2ebb36db19eff58ce79336624"><td class="memItemLeft" align="right" valign="top">AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a490f65f2ebb36db19eff58ce79336624">taskRedLight</a> (400, true, <a class="el" href="#ae1da010212562ae696ab167800d5d77e">readRedlight</a>)</td></tr>
+<tr class="memitem:a0cca4621b2fd4420a252445f877fb884" id="r_a0cca4621b2fd4420a252445f877fb884"><td class="memItemLeft" align="right" valign="top">AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0cca4621b2fd4420a252445f877fb884">taskMelody</a> (800, false, <a class="el" href="#ab237cf233c439d830f2a5b9ac479c35b">melodyExecutable</a>)</td></tr>
+<tr class="memitem:ade46c88eba23a6e30aba9ff3abc51d9d" id="r_ade46c88eba23a6e30aba9ff3abc51d9d"><td class="memItemLeft" align="right" valign="top">AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ade46c88eba23a6e30aba9ff3abc51d9d">taskReadButton</a> (100, true, <a class="el" href="#a564c61ed91865edf885ca15ea6158e21">readButton</a>)</td></tr>
+<tr class="memitem:a7f87e069bbc40f10f9a4d376a3603a85" id="r_a7f87e069bbc40f10f9a4d376a3603a85"><td class="memItemLeft" align="right" valign="top">AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7f87e069bbc40f10f9a4d376a3603a85">taskSecurity</a> (1000, false, <a class="el" href="#a5883e2c9d55def93387501c2a17c1a41">seguridad</a>)</td></tr>
+<tr class="memitem:a444b04ea9165e123f1faf989aae249fc" id="r_a444b04ea9165e123f1faf989aae249fc"><td class="memItemLeft" align="right" valign="top">AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a444b04ea9165e123f1faf989aae249fc">taskMelodyFail</a> (800, false, <a class="el" href="#a138a5df6fd93cd0d4920195c4b9e7ee5">failMelody</a>)</td></tr>
+<tr class="memitem:aea07ee33b5396d48fecaff862b955264" id="r_aea07ee33b5396d48fecaff862b955264"><td class="memItemLeft" align="right" valign="top">AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aea07ee33b5396d48fecaff862b955264">taskMelodySuccess</a> (800, false, <a class="el" href="#a4d97e660d0bc81893106854d12f07a6a">successMelody</a>)</td></tr>
+<tr class="memitem:a213c22e45c96fcfd502f2a25f8a91e7c" id="r_a213c22e45c96fcfd502f2a25f8a91e7c"><td class="memItemLeft" align="right" valign="top">AsyncTask&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a213c22e45c96fcfd502f2a25f8a91e7c">taskBloqueo</a> (500, false, <a class="el" href="#a255cd17346e3810e05deecd13b5b273a">sisBloqueado</a>)</td></tr>
+<tr class="memitem:a4fc01d736fe50cf5b977f755b675f11d" id="r_a4fc01d736fe50cf5b977f755b675f11d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4fc01d736fe50cf5b977f755b675f11d">setup</a> ()</td></tr>
+<tr class="memdesc:a4fc01d736fe50cf5b977f755b675f11d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inicializa el sistema y todos sus componentes.  <br /></td></tr>
+<tr class="memitem:afe461d27b9c48d5921c00d521181f12f" id="r_afe461d27b9c48d5921c00d521181f12f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afe461d27b9c48d5921c00d521181f12f">loop</a> ()</td></tr>
+<tr class="memdesc:afe461d27b9c48d5921c00d521181f12f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bucle principal del sistema, ejecuta la lógica repetitiva.  <br /></td></tr>
+<tr class="memitem:a390833d0072e6440c9707a25c053dfb3" id="r_a390833d0072e6440c9707a25c053dfb3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a390833d0072e6440c9707a25c053dfb3">outputInicio</a> ()</td></tr>
+<tr class="memdesc:a390833d0072e6440c9707a25c053dfb3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Acción al entrar en el estado Inicio.  <br /></td></tr>
+<tr class="memitem:a3b64b265de658a850b70593cbd078c73" id="r_a3b64b265de658a850b70593cbd078c73"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3b64b265de658a850b70593cbd078c73">outputMAmbiental</a> ()</td></tr>
+<tr class="memdesc:a3b64b265de658a850b70593cbd078c73"><td class="mdescLeft">&#160;</td><td class="mdescRight">Acción al entrar en el estado MonitorAmbiental.  <br /></td></tr>
+<tr class="memitem:ae7f7255177511950ea5ff9086d20a9ef" id="r_ae7f7255177511950ea5ff9086d20a9ef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae7f7255177511950ea5ff9086d20a9ef">outputBloqueo</a> ()</td></tr>
+<tr class="memdesc:ae7f7255177511950ea5ff9086d20a9ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Acción al entrar en el estado Bloqueo.  <br /></td></tr>
+<tr class="memitem:aab9c5b060d49c9eae5717f5303a1984d" id="r_aab9c5b060d49c9eae5717f5303a1984d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aab9c5b060d49c9eae5717f5303a1984d">outputAlarma</a> ()</td></tr>
+<tr class="memdesc:aab9c5b060d49c9eae5717f5303a1984d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Acción al entrar en el estado Alarma.  <br /></td></tr>
+<tr class="memitem:a7131b3416e5abd8e0fc3d76f399ef2a7" id="r_a7131b3416e5abd8e0fc3d76f399ef2a7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7131b3416e5abd8e0fc3d76f399ef2a7">outputAlarmaRed</a> ()</td></tr>
+<tr class="memdesc:a7131b3416e5abd8e0fc3d76f399ef2a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Acción al entrar en el estado AlarmaRed.  <br /></td></tr>
+<tr class="memitem:a75cf38a436812a027332067cad2c2a55" id="r_a75cf38a436812a027332067cad2c2a55"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a75cf38a436812a027332067cad2c2a55">outputMEventos</a> ()</td></tr>
+<tr class="memdesc:a75cf38a436812a027332067cad2c2a55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Acción al entrar en el estado MonitorEventos.  <br /></td></tr>
+<tr class="memitem:adb1596ab0791393080cb3ad5372c36c5" id="r_adb1596ab0791393080cb3ad5372c36c5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adb1596ab0791393080cb3ad5372c36c5">leavingInicio</a> ()</td></tr>
+<tr class="memdesc:adb1596ab0791393080cb3ad5372c36c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Acción al salir del estado Inicio.  <br /></td></tr>
+<tr class="memitem:a4fc93deb0172ff2e6ace163b32ce1b94" id="r_a4fc93deb0172ff2e6ace163b32ce1b94"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4fc93deb0172ff2e6ace163b32ce1b94">leavingAmbiental</a> ()</td></tr>
+<tr class="memdesc:a4fc93deb0172ff2e6ace163b32ce1b94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Acción al salir del estado MonitorAmbiental.  <br /></td></tr>
+<tr class="memitem:ac64caf9be4457ff753ce6899ba860133" id="r_ac64caf9be4457ff753ce6899ba860133"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac64caf9be4457ff753ce6899ba860133">leavingBloqueo</a> ()</td></tr>
+<tr class="memdesc:ac64caf9be4457ff753ce6899ba860133"><td class="mdescLeft">&#160;</td><td class="mdescRight">Acción al salir del estado Bloqueo.  <br /></td></tr>
+<tr class="memitem:a573f2761e3b9df7871acae505f73bf66" id="r_a573f2761e3b9df7871acae505f73bf66"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a573f2761e3b9df7871acae505f73bf66">leavingAlarma</a> ()</td></tr>
+<tr class="memdesc:a573f2761e3b9df7871acae505f73bf66"><td class="mdescLeft">&#160;</td><td class="mdescRight">Acción al salir del estado Alarma.  <br /></td></tr>
+<tr class="memitem:a925ceb72f88fdcde2c4e8eb7bca28dc7" id="r_a925ceb72f88fdcde2c4e8eb7bca28dc7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a925ceb72f88fdcde2c4e8eb7bca28dc7">leavingAlarmaRed</a> ()</td></tr>
+<tr class="memdesc:a925ceb72f88fdcde2c4e8eb7bca28dc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Acción al salir del estado AlarmaRed.  <br /></td></tr>
+<tr class="memitem:a953cfc9dea5c65b30aa125ae96867cfb" id="r_a953cfc9dea5c65b30aa125ae96867cfb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a953cfc9dea5c65b30aa125ae96867cfb">leavingEventos</a> ()</td></tr>
+<tr class="memdesc:a953cfc9dea5c65b30aa125ae96867cfb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Acción al salir del estado MonitorEventos.  <br /></td></tr>
+<tr class="memitem:a941768364650a2b2b243661f317684d5" id="r_a941768364650a2b2b243661f317684d5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a941768364650a2b2b243661f317684d5">comparar</a> (char vector1[], char vector2[], int longitud)</td></tr>
+<tr class="memdesc:a941768364650a2b2b243661f317684d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compara dos vectores de caracteres para verificar igualdad.  <br /></td></tr>
+<tr class="memitem:a21a92ae381482abd260238eb23e1b685" id="r_a21a92ae381482abd260238eb23e1b685"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a21a92ae381482abd260238eb23e1b685">claCorrecta</a> ()</td></tr>
+<tr class="memdesc:a21a92ae381482abd260238eb23e1b685"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicación visual y sonora de contraseña correcta.  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
@@ -479,6 +478,9 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><b>d5</b> = 4</td><
 const int&#160;</td><td class="memItemRight" valign="bottom"><b>d6</b> = 3</td></tr>
 <tr class="memitem:a7ce0880460ab9afdbb59e308d6f93e04" id="r_a7ce0880460ab9afdbb59e308d6f93e04"><td class="memItemLeft" align="right" valign="top"><a id="a7ce0880460ab9afdbb59e308d6f93e04" name="a7ce0880460ab9afdbb59e308d6f93e04"></a>
 const int&#160;</td><td class="memItemRight" valign="bottom"><b>d7</b> = 2</td></tr>
+<tr class="memitem:a4807e122cc77f1804acb97d47df54ec1" id="r_a4807e122cc77f1804acb97d47df54ec1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_tarjeta_registrada.html">TarjetaRegistrada</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4807e122cc77f1804acb97d47df54ec1">tarjetasConocidas</a> []</td></tr>
+<tr class="memitem:a7ee6172470330599688bf71337ed670b" id="r_a7ee6172470330599688bf71337ed670b"><td class="memItemLeft" align="right" valign="top"><a id="a7ee6172470330599688bf71337ed670b" name="a7ee6172470330599688bf71337ed670b"></a>
+const int&#160;</td><td class="memItemRight" valign="bottom"><b>numTarjetas</b> = sizeof(tarjetasConocidas) / sizeof(<a class="el" href="struct_tarjeta_registrada.html">TarjetaRegistrada</a>)</td></tr>
 <tr class="memitem:a829655a147df70dd4cc94eae40a2204e" id="r_a829655a147df70dd4cc94eae40a2204e"><td class="memItemLeft" align="right" valign="top"><a id="a829655a147df70dd4cc94eae40a2204e" name="a829655a147df70dd4cc94eae40a2204e"></a>
 const byte&#160;</td><td class="memItemRight" valign="bottom"><b>ROWS</b> = 4</td></tr>
 <tr class="memdesc:a829655a147df70dd4cc94eae40a2204e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of rows in the matrix keyboard. <br /></td></tr>
@@ -486,94 +488,332 @@ const byte&#160;</td><td class="memItemRight" valign="bottom"><b>ROWS</b> = 4</t
 const byte&#160;</td><td class="memItemRight" valign="bottom"><b>COLS</b> = 4</td></tr>
 <tr class="memdesc:aefd90f1160eaa105bc910d4d7c46b815"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of columns in the matrix keyboard. <br /></td></tr>
 <tr class="memitem:a856e873a1d14012d57ddb813c4a1e40a" id="r_a856e873a1d14012d57ddb813c4a1e40a"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a856e873a1d14012d57ddb813c4a1e40a">keys</a> [<a class="el" href="#a829655a147df70dd4cc94eae40a2204e">ROWS</a>][<a class="el" href="#aefd90f1160eaa105bc910d4d7c46b815">COLS</a>]</td></tr>
-<tr class="memdesc:a856e873a1d14012d57ddb813c4a1e40a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Matrix keyboard key mapping.  <br /></td></tr>
+<tr class="memdesc:a856e873a1d14012d57ddb813c4a1e40a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mapeo de teclas del teclado matricial.  <br /></td></tr>
 <tr class="memitem:a6d6753e0ae098b31e2f84d4024e361cf" id="r_a6d6753e0ae098b31e2f84d4024e361cf"><td class="memItemLeft" align="right" valign="top"><a id="a6d6753e0ae098b31e2f84d4024e361cf" name="a6d6753e0ae098b31e2f84d4024e361cf"></a>
 byte&#160;</td><td class="memItemRight" valign="bottom"><b>rowPins</b> [<a class="el" href="#a829655a147df70dd4cc94eae40a2204e">ROWS</a>] = {22, 24, 26, 28}</td></tr>
+<tr class="memdesc:a6d6753e0ae098b31e2f84d4024e361cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pines conectados a las filas del teclado. <br /></td></tr>
 <tr class="memitem:aa9fece7b062124080e4b2976f9a8b675" id="r_aa9fece7b062124080e4b2976f9a8b675"><td class="memItemLeft" align="right" valign="top"><a id="aa9fece7b062124080e4b2976f9a8b675" name="aa9fece7b062124080e4b2976f9a8b675"></a>
 byte&#160;</td><td class="memItemRight" valign="bottom"><b>colPins</b> [<a class="el" href="#aefd90f1160eaa105bc910d4d7c46b815">COLS</a>] = {30, 32, 34, 36}</td></tr>
+<tr class="memdesc:aa9fece7b062124080e4b2976f9a8b675"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pines conectados a las columnas del teclado. <br /></td></tr>
 <tr class="memitem:a0e6c3cc7e8c762ab0ca1fa2296d7bbfe" id="r_a0e6c3cc7e8c762ab0ca1fa2296d7bbfe"><td class="memItemLeft" align="right" valign="top"><a id="a0e6c3cc7e8c762ab0ca1fa2296d7bbfe" name="a0e6c3cc7e8c762ab0ca1fa2296d7bbfe"></a>
-Keypad&#160;</td><td class="memItemRight" valign="bottom"><b>keypad</b> = Keypad(makeKeymap(<a class="el" href="#a856e873a1d14012d57ddb813c4a1e40a">keys</a>), rowPins, colPins, <a class="el" href="#a829655a147df70dd4cc94eae40a2204e">ROWS</a>, <a class="el" href="#aefd90f1160eaa105bc910d4d7c46b815">COLS</a>)</td></tr>
-<tr class="memitem:a640f93dbb6516d9404161a09b938101e" id="r_a640f93dbb6516d9404161a09b938101e"><td class="memItemLeft" align="right" valign="top"><a id="a640f93dbb6516d9404161a09b938101e" name="a640f93dbb6516d9404161a09b938101e"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>buzzer</b> = 7</td></tr>
+Keypad&#160;</td><td class="memItemRight" valign="bottom"><b>keypad</b> = Keypad(makeKeymap(<a class="el" href="#a856e873a1d14012d57ddb813c4a1e40a">keys</a>), <a class="el" href="#a6d6753e0ae098b31e2f84d4024e361cf">rowPins</a>, <a class="el" href="#aa9fece7b062124080e4b2976f9a8b675">colPins</a>, <a class="el" href="#a829655a147df70dd4cc94eae40a2204e">ROWS</a>, <a class="el" href="#aefd90f1160eaa105bc910d4d7c46b815">COLS</a>)</td></tr>
+<tr class="memdesc:a0e6c3cc7e8c762ab0ca1fa2296d7bbfe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Objeto para manejar la lectura del teclado matricial. <br /></td></tr>
+<tr class="memitem:a640f93dbb6516d9404161a09b938101e" id="r_a640f93dbb6516d9404161a09b938101e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a640f93dbb6516d9404161a09b938101e">buzzer</a> = 7</td></tr>
+<tr class="memdesc:a640f93dbb6516d9404161a09b938101e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pin de salida del buzzer.  <br /></td></tr>
 <tr class="memitem:a72b61ae7df690af24ac849ef2eab1ac4" id="r_a72b61ae7df690af24ac849ef2eab1ac4"><td class="memItemLeft" align="right" valign="top"><a id="a72b61ae7df690af24ac849ef2eab1ac4" name="a72b61ae7df690af24ac849ef2eab1ac4"></a>
 const int&#160;</td><td class="memItemRight" valign="bottom"><b>pinLight</b> = A0</td></tr>
+<tr class="memdesc:a72b61ae7df690af24ac849ef2eab1ac4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pin analógico del sensor de luz. <br /></td></tr>
 <tr class="memitem:a0e51d5af1ff9cc088aa3cc40ee6dae58" id="r_a0e51d5af1ff9cc088aa3cc40ee6dae58"><td class="memItemLeft" align="right" valign="top"><a id="a0e51d5af1ff9cc088aa3cc40ee6dae58" name="a0e51d5af1ff9cc088aa3cc40ee6dae58"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>valueLight</b> = 0</td></tr>
+<tr class="memdesc:a0e51d5af1ff9cc088aa3cc40ee6dae58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Variable para almacenar la lectura del sensor de luz. <br /></td></tr>
 <tr class="memitem:a5d4bcb07a864cd2d202fb034fc8fd99f" id="r_a5d4bcb07a864cd2d202fb034fc8fd99f"><td class="memItemLeft" align="right" valign="top"><a id="a5d4bcb07a864cd2d202fb034fc8fd99f" name="a5d4bcb07a864cd2d202fb034fc8fd99f"></a>
 const int&#160;</td><td class="memItemRight" valign="bottom"><b>pinTemp</b> =A4</td></tr>
+<tr class="memdesc:a5d4bcb07a864cd2d202fb034fc8fd99f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pin analógico del sensor de temperatura. <br /></td></tr>
 <tr class="memitem:a281cf163dfcb6d2fbcb1e8ee332e26ff" id="r_a281cf163dfcb6d2fbcb1e8ee332e26ff"><td class="memItemLeft" align="right" valign="top"><a id="a281cf163dfcb6d2fbcb1e8ee332e26ff" name="a281cf163dfcb6d2fbcb1e8ee332e26ff"></a>
 const int&#160;</td><td class="memItemRight" valign="bottom"><b>pinHall</b> = A1</td></tr>
+<tr class="memdesc:a281cf163dfcb6d2fbcb1e8ee332e26ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pin analógico del sensor de efecto Hall. <br /></td></tr>
 <tr class="memitem:a6c21309c60feb08b671e1db137688a55" id="r_a6c21309c60feb08b671e1db137688a55"><td class="memItemLeft" align="right" valign="top"><a id="a6c21309c60feb08b671e1db137688a55" name="a6c21309c60feb08b671e1db137688a55"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>valueHall</b> = 0</td></tr>
+<tr class="memdesc:a6c21309c60feb08b671e1db137688a55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Variable para almacenar la lectura del sensor de efecto Hall. <br /></td></tr>
 <tr class="memitem:a93937818ce0358b93605ba96ad02bfd5" id="r_a93937818ce0358b93605ba96ad02bfd5"><td class="memItemLeft" align="right" valign="top"><a id="a93937818ce0358b93605ba96ad02bfd5" name="a93937818ce0358b93605ba96ad02bfd5"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>hum</b> = 0</td></tr>
+<tr class="memdesc:a93937818ce0358b93605ba96ad02bfd5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Variable que almacena la humedad medida por el sensor. <br /></td></tr>
 <tr class="memitem:ab96b63517cfbaecdddb45787ce5261a9" id="r_ab96b63517cfbaecdddb45787ce5261a9"><td class="memItemLeft" align="right" valign="top"><a id="ab96b63517cfbaecdddb45787ce5261a9" name="ab96b63517cfbaecdddb45787ce5261a9"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>sensorState</b> = 0</td></tr>
+<tr class="memdesc:ab96b63517cfbaecdddb45787ce5261a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Estado del sensor, utilizado para validaciones. <br /></td></tr>
 <tr class="memitem:a24d61a35b72d7299eb6b5f48e71a571b" id="r_a24d61a35b72d7299eb6b5f48e71a571b"><td class="memItemLeft" align="right" valign="top"><a id="a24d61a35b72d7299eb6b5f48e71a571b" name="a24d61a35b72d7299eb6b5f48e71a571b"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><b>temp</b> = 0</td></tr>
-<tr class="memitem:a6a1e4720fd7bbd1f81bebf1b3de0efec" id="r_a6a1e4720fd7bbd1f81bebf1b3de0efec"><td class="memItemLeft" align="right" valign="top"><a id="a6a1e4720fd7bbd1f81bebf1b3de0efec" name="a6a1e4720fd7bbd1f81bebf1b3de0efec"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>tempHigh</b> = 29</td></tr>
-<tr class="memitem:a94903018690fcd7ea22fe857aee17107" id="r_a94903018690fcd7ea22fe857aee17107"><td class="memItemLeft" align="right" valign="top"><a id="a94903018690fcd7ea22fe857aee17107" name="a94903018690fcd7ea22fe857aee17107"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>tempLow</b> = 15</td></tr>
-<tr class="memitem:a2b9930ebaec8233f157d5cbcc193b350" id="r_a2b9930ebaec8233f157d5cbcc193b350"><td class="memItemLeft" align="right" valign="top"><a id="a2b9930ebaec8233f157d5cbcc193b350" name="a2b9930ebaec8233f157d5cbcc193b350"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>luzHigh</b> = 800</td></tr>
-<tr class="memitem:a8d23b2f24705f230a4c6a332a1526f08" id="r_a8d23b2f24705f230a4c6a332a1526f08"><td class="memItemLeft" align="right" valign="top"><a id="a8d23b2f24705f230a4c6a332a1526f08" name="a8d23b2f24705f230a4c6a332a1526f08"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>luzLow</b> = 200</td></tr>
-<tr class="memitem:af3563e8c83cc5097ea411eaef3c4e32c" id="r_af3563e8c83cc5097ea411eaef3c4e32c"><td class="memItemLeft" align="right" valign="top"><a id="af3563e8c83cc5097ea411eaef3c4e32c" name="af3563e8c83cc5097ea411eaef3c4e32c"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>humHigh</b> = 70</td></tr>
-<tr class="memitem:abf5f34c988680bba2e01fe083f19e60d" id="r_abf5f34c988680bba2e01fe083f19e60d"><td class="memItemLeft" align="right" valign="top"><a id="abf5f34c988680bba2e01fe083f19e60d" name="abf5f34c988680bba2e01fe083f19e60d"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>humLow</b> = 30</td></tr>
+<tr class="memdesc:a24d61a35b72d7299eb6b5f48e71a571b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Variable para almacenar la temperatura medida. <br /></td></tr>
+<tr class="memitem:a6a1e4720fd7bbd1f81bebf1b3de0efec" id="r_a6a1e4720fd7bbd1f81bebf1b3de0efec"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6a1e4720fd7bbd1f81bebf1b3de0efec">tempHigh</a> = 29</td></tr>
+<tr class="memdesc:a6a1e4720fd7bbd1f81bebf1b3de0efec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Umbrales de temperatura para generar alertas.  <br /></td></tr>
+<tr class="memitem:a94903018690fcd7ea22fe857aee17107" id="r_a94903018690fcd7ea22fe857aee17107"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a94903018690fcd7ea22fe857aee17107">tempLow</a> = 15</td></tr>
+<tr class="memitem:a2b9930ebaec8233f157d5cbcc193b350" id="r_a2b9930ebaec8233f157d5cbcc193b350"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2b9930ebaec8233f157d5cbcc193b350">luzHigh</a> = 800</td></tr>
+<tr class="memdesc:a2b9930ebaec8233f157d5cbcc193b350"><td class="mdescLeft">&#160;</td><td class="mdescRight">Umbrales de luz para generar alertas.  <br /></td></tr>
+<tr class="memitem:a8d23b2f24705f230a4c6a332a1526f08" id="r_a8d23b2f24705f230a4c6a332a1526f08"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8d23b2f24705f230a4c6a332a1526f08">luzLow</a> = 200</td></tr>
+<tr class="memitem:af3563e8c83cc5097ea411eaef3c4e32c" id="r_af3563e8c83cc5097ea411eaef3c4e32c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af3563e8c83cc5097ea411eaef3c4e32c">humHigh</a> = 70</td></tr>
+<tr class="memdesc:af3563e8c83cc5097ea411eaef3c4e32c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Umbrales de humedad para generar alertas.  <br /></td></tr>
+<tr class="memitem:abf5f34c988680bba2e01fe083f19e60d" id="r_abf5f34c988680bba2e01fe083f19e60d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abf5f34c988680bba2e01fe083f19e60d">humLow</a> = 30</td></tr>
 <tr class="memitem:a5e8d4d3b0e9947cff17af4178fb46adb" id="r_a5e8d4d3b0e9947cff17af4178fb46adb"><td class="memItemLeft" align="right" valign="top"><a id="a5e8d4d3b0e9947cff17af4178fb46adb" name="a5e8d4d3b0e9947cff17af4178fb46adb"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>hallHigh</b> = 300</td></tr>
+<tr class="memdesc:a5e8d4d3b0e9947cff17af4178fb46adb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Umbral del sensor de efecto Hall para activación. <br /></td></tr>
 <tr class="memitem:a5397b15b944b7324ae07df47cba69dfe" id="r_a5397b15b944b7324ae07df47cba69dfe"><td class="memItemLeft" align="right" valign="top"><a id="a5397b15b944b7324ae07df47cba69dfe" name="a5397b15b944b7324ae07df47cba69dfe"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>alarmCount</b> = 0</td></tr>
+<tr class="memdesc:a5397b15b944b7324ae07df47cba69dfe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contador de activaciones de alarma. <br /></td></tr>
 <tr class="memitem:a62b8abf11db2465102f4e2464ae97a9f" id="r_a62b8abf11db2465102f4e2464ae97a9f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a62b8abf11db2465102f4e2464ae97a9f">BloqueoMelody</a> []</td></tr>
+<tr class="memdesc:a62b8abf11db2465102f4e2464ae97a9f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Conjunto de melodías utilizadas en el sistema.  <br /></td></tr>
 <tr class="memitem:a5fc31934f55fe9b3a287e2b7370f4a08" id="r_a5fc31934f55fe9b3a287e2b7370f4a08"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5fc31934f55fe9b3a287e2b7370f4a08">correctDurations</a> []</td></tr>
+<tr class="memdesc:a5fc31934f55fe9b3a287e2b7370f4a08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Duraciones de cada nota en la melodía de bloqueo.  <br /></td></tr>
 <tr class="memitem:a46f702a6e5c601ab3163e97ef738510c" id="r_a46f702a6e5c601ab3163e97ef738510c"><td class="memItemLeft" align="right" valign="top"><a id="a46f702a6e5c601ab3163e97ef738510c" name="a46f702a6e5c601ab3163e97ef738510c"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>correctMelodyLength</b> = sizeof(BloqueoMelody) / sizeof(BloqueoMelody[0])</td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>correctMelodyLength</b> = sizeof(<a class="el" href="#a62b8abf11db2465102f4e2464ae97a9f">BloqueoMelody</a>) / sizeof(<a class="el" href="#a62b8abf11db2465102f4e2464ae97a9f">BloqueoMelody</a>[0])</td></tr>
+<tr class="memdesc:a46f702a6e5c601ab3163e97ef738510c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Longitud de la melodía de bloqueo. <br /></td></tr>
 <tr class="memitem:a7ee2e5497a814160e8b479d7203fc69e" id="r_a7ee2e5497a814160e8b479d7203fc69e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7ee2e5497a814160e8b479d7203fc69e">AlarmMelody</a> []</td></tr>
+<tr class="memdesc:a7ee2e5497a814160e8b479d7203fc69e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Melodía utilizada para alertas o errores.  <br /></td></tr>
 <tr class="memitem:a6f43d95a3d9afcff66587fc3ef9117d5" id="r_a6f43d95a3d9afcff66587fc3ef9117d5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6f43d95a3d9afcff66587fc3ef9117d5">incorrectDurations</a> []</td></tr>
+<tr class="memdesc:a6f43d95a3d9afcff66587fc3ef9117d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Duraciones de cada nota en la melodía de error.  <br /></td></tr>
 <tr class="memitem:afe5d32bbac4e6c6d97638e2d3ec4d725" id="r_afe5d32bbac4e6c6d97638e2d3ec4d725"><td class="memItemLeft" align="right" valign="top"><a id="afe5d32bbac4e6c6d97638e2d3ec4d725" name="afe5d32bbac4e6c6d97638e2d3ec4d725"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>incorrectMelodyLength</b> = sizeof(AlarmMelody) / sizeof(AlarmMelody[0])</td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>incorrectMelodyLength</b> = sizeof(<a class="el" href="#a7ee2e5497a814160e8b479d7203fc69e">AlarmMelody</a>) / sizeof(<a class="el" href="#a7ee2e5497a814160e8b479d7203fc69e">AlarmMelody</a>[0])</td></tr>
+<tr class="memdesc:afe5d32bbac4e6c6d97638e2d3ec4d725"><td class="mdescLeft">&#160;</td><td class="mdescRight">Longitud de la melodía de error. <br /></td></tr>
 <tr class="memitem:a898fb84dc752c9163986938f4bbf60af" id="r_a898fb84dc752c9163986938f4bbf60af"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a898fb84dc752c9163986938f4bbf60af">rightMelody</a> []</td></tr>
+<tr class="memdesc:a898fb84dc752c9163986938f4bbf60af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Melodía utilizada para confirmaciones correctas.  <br /></td></tr>
 <tr class="memitem:ad3da97b533b053c82f37092cc10116b5" id="r_ad3da97b533b053c82f37092cc10116b5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad3da97b533b053c82f37092cc10116b5">rightDurations</a> []</td></tr>
+<tr class="memdesc:ad3da97b533b053c82f37092cc10116b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Duraciones de cada nota en la melodía de éxito.  <br /></td></tr>
 <tr class="memitem:a993195b16030fbd9a1e43705d8d69ff9" id="r_a993195b16030fbd9a1e43705d8d69ff9"><td class="memItemLeft" align="right" valign="top"><a id="a993195b16030fbd9a1e43705d8d69ff9" name="a993195b16030fbd9a1e43705d8d69ff9"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>rightMelodyLength</b> = sizeof(rightMelody) / sizeof(rightMelody[0])</td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>rightMelodyLength</b> = sizeof(<a class="el" href="#a898fb84dc752c9163986938f4bbf60af">rightMelody</a>) / sizeof(<a class="el" href="#a898fb84dc752c9163986938f4bbf60af">rightMelody</a>[0])</td></tr>
+<tr class="memdesc:a993195b16030fbd9a1e43705d8d69ff9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Longitud de la melodía de éxito. <br /></td></tr>
 <tr class="memitem:a6ac43296776e39a14c32ba0b29129b06" id="r_a6ac43296776e39a14c32ba0b29129b06"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6ac43296776e39a14c32ba0b29129b06">wrongMelody</a> []</td></tr>
+<tr class="memdesc:a6ac43296776e39a14c32ba0b29129b06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Melodía utilizada para indicar una acción incorrecta.  <br /></td></tr>
 <tr class="memitem:a9ca5b274669eb7515f959561e1af2d88" id="r_a9ca5b274669eb7515f959561e1af2d88"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9ca5b274669eb7515f959561e1af2d88">wrongDurations</a> []</td></tr>
+<tr class="memdesc:a9ca5b274669eb7515f959561e1af2d88"><td class="mdescLeft">&#160;</td><td class="mdescRight">Duraciones de cada nota en la melodía de error.  <br /></td></tr>
 <tr class="memitem:a77b033bb89e6174a8a738839814b37ab" id="r_a77b033bb89e6174a8a738839814b37ab"><td class="memItemLeft" align="right" valign="top"><a id="a77b033bb89e6174a8a738839814b37ab" name="a77b033bb89e6174a8a738839814b37ab"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>wrongMelodyLength</b> = sizeof(wrongMelody) / sizeof(wrongMelody[0])</td></tr>
-<tr class="memitem:a0d4b3de8f6c2f180360bdf15af5d0c7d" id="r_a0d4b3de8f6c2f180360bdf15af5d0c7d"><td class="memItemLeft" align="right" valign="top"><a id="a0d4b3de8f6c2f180360bdf15af5d0c7d" name="a0d4b3de8f6c2f180360bdf15af5d0c7d"></a>
-const char&#160;</td><td class="memItemRight" valign="bottom"><b>password</b> [6] = {'1','1','2','2','3', '#'}</td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>wrongMelodyLength</b> = sizeof(<a class="el" href="#a6ac43296776e39a14c32ba0b29129b06">wrongMelody</a>) / sizeof(<a class="el" href="#a6ac43296776e39a14c32ba0b29129b06">wrongMelody</a>[0])</td></tr>
+<tr class="memdesc:a77b033bb89e6174a8a738839814b37ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Longitud de la melodía de error. <br /></td></tr>
+<tr class="memitem:a0d4b3de8f6c2f180360bdf15af5d0c7d" id="r_a0d4b3de8f6c2f180360bdf15af5d0c7d"><td class="memItemLeft" align="right" valign="top">const char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0d4b3de8f6c2f180360bdf15af5d0c7d">password</a> [6] = {'1', '1', '2', '2', '3', '#'}</td></tr>
+<tr class="memdesc:a0d4b3de8f6c2f180360bdf15af5d0c7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contraseña de acceso al sistema.  <br /></td></tr>
 <tr class="memitem:a4b92294b4e82a7d875de15a7c2f804b3" id="r_a4b92294b4e82a7d875de15a7c2f804b3"><td class="memItemLeft" align="right" valign="top"><a id="a4b92294b4e82a7d875de15a7c2f804b3" name="a4b92294b4e82a7d875de15a7c2f804b3"></a>
 char&#160;</td><td class="memItemRight" valign="bottom"><b>buffer</b> [6]</td></tr>
+<tr class="memdesc:a4b92294b4e82a7d875de15a7c2f804b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Buffer temporal para almacenar la entrada de usuario al validar la contraseña. <br /></td></tr>
 <tr class="memitem:a617a47c70795bcff659815ad0efd2266" id="r_a617a47c70795bcff659815ad0efd2266"><td class="memItemLeft" align="right" valign="top"><a id="a617a47c70795bcff659815ad0efd2266" name="a617a47c70795bcff659815ad0efd2266"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>counter</b> = -1</td></tr>
+<tr class="memdesc:a617a47c70795bcff659815ad0efd2266"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contador utilizado para rastrear la posición en el buffer de la contraseña. <br /></td></tr>
 <tr class="memitem:a322d8a63e2d29a4b2accd829c88e571b" id="r_a322d8a63e2d29a4b2accd829c88e571b"><td class="memItemLeft" align="right" valign="top"><a id="a322d8a63e2d29a4b2accd829c88e571b" name="a322d8a63e2d29a4b2accd829c88e571b"></a>
 char&#160;</td><td class="memItemRight" valign="bottom"><b>tryCounter</b> = 0</td></tr>
-<tr class="memitem:ad4db59ccea8946af2bb70f8269e99eeb" id="r_ad4db59ccea8946af2bb70f8269e99eeb"><td class="memItemLeft" align="right" valign="top"><a id="ad4db59ccea8946af2bb70f8269e99eeb" name="ad4db59ccea8946af2bb70f8269e99eeb"></a>
-Input&#160;</td><td class="memItemRight" valign="bottom"><b>input</b> = Input::unknown</td></tr>
+<tr class="memdesc:a322d8a63e2d29a4b2accd829c88e571b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contador de intentos de acceso fallidos. <br /></td></tr>
+<tr class="memitem:ad4db59ccea8946af2bb70f8269e99eeb" id="r_ad4db59ccea8946af2bb70f8269e99eeb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a080a822f0093973313bd644e517a5090">Input</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad4db59ccea8946af2bb70f8269e99eeb">input</a> = <a class="el" href="#a080a822f0093973313bd644e517a5090a5b9f6d065e6e98483b3d3ed01f4f6cbe">Input::unknown</a></td></tr>
+<tr class="memdesc:ad4db59ccea8946af2bb70f8269e99eeb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Última entrada capturada por el sistema.  <br /></td></tr>
 <tr class="memitem:aa109881c86c6300472690e41aa2e9a5c" id="r_aa109881c86c6300472690e41aa2e9a5c"><td class="memItemLeft" align="right" valign="top"><a id="aa109881c86c6300472690e41aa2e9a5c" name="aa109881c86c6300472690e41aa2e9a5c"></a>
 const byte&#160;</td><td class="memItemRight" valign="bottom"><b>ledPin</b> = LED_BUILTIN</td></tr>
+<tr class="memdesc:aa109881c86c6300472690e41aa2e9a5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pin del LED integrado del microcontrolador (usualmente LED_BUILTIN). <br /></td></tr>
 <tr class="memitem:ad43bbd53ee15610b1c213b0b6412d175" id="r_ad43bbd53ee15610b1c213b0b6412d175"><td class="memItemLeft" align="right" valign="top"><a id="ad43bbd53ee15610b1c213b0b6412d175" name="ad43bbd53ee15610b1c213b0b6412d175"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>ledState</b> = LOW</td></tr>
+<tr class="memdesc:ad43bbd53ee15610b1c213b0b6412d175"><td class="mdescLeft">&#160;</td><td class="mdescRight">Estado actual del LED principal. <br /></td></tr>
 <tr class="memitem:a721d4cad0c1ba4d3d73845c615671992" id="r_a721d4cad0c1ba4d3d73845c615671992"><td class="memItemLeft" align="right" valign="top"><a id="a721d4cad0c1ba4d3d73845c615671992" name="a721d4cad0c1ba4d3d73845c615671992"></a>
 char&#160;</td><td class="memItemRight" valign="bottom"><b>ledState_text</b> [4]</td></tr>
+<tr class="memdesc:a721d4cad0c1ba4d3d73845c615671992"><td class="mdescLeft">&#160;</td><td class="mdescRight">Representación en texto del estado del LED ("ON"/"OFF"). <br /></td></tr>
 <tr class="memitem:a863952df8dbfaf73d43c2c2a2f10eb5e" id="r_a863952df8dbfaf73d43c2c2a2f10eb5e"><td class="memItemLeft" align="right" valign="top"><a id="a863952df8dbfaf73d43c2c2a2f10eb5e" name="a863952df8dbfaf73d43c2c2a2f10eb5e"></a>
 char&#160;</td><td class="memItemRight" valign="bottom"><b>string_on</b> [] = &quot;ON&quot;</td></tr>
+<tr class="memdesc:a863952df8dbfaf73d43c2c2a2f10eb5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Texto para indicar encendido. <br /></td></tr>
 <tr class="memitem:ab391a2e52f62612c3a45c7d11cd426c3" id="r_ab391a2e52f62612c3a45c7d11cd426c3"><td class="memItemLeft" align="right" valign="top"><a id="ab391a2e52f62612c3a45c7d11cd426c3" name="ab391a2e52f62612c3a45c7d11cd426c3"></a>
 char&#160;</td><td class="memItemRight" valign="bottom"><b>string_off</b> [] = &quot;OFF&quot;</td></tr>
-<tr class="memitem:ab1aa63cecb92e464e38af0e49aff15b0" id="r_ab1aa63cecb92e464e38af0e49aff15b0"><td class="memItemLeft" align="right" valign="top"><a id="ab1aa63cecb92e464e38af0e49aff15b0" name="ab1aa63cecb92e464e38af0e49aff15b0"></a>
-const byte&#160;</td><td class="memItemRight" valign="bottom"><b>analogPin</b> = A5</td></tr>
+<tr class="memdesc:ab391a2e52f62612c3a45c7d11cd426c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Texto para indicar apagado. <br /></td></tr>
+<tr class="memitem:ab1aa63cecb92e464e38af0e49aff15b0" id="r_ab1aa63cecb92e464e38af0e49aff15b0"><td class="memItemLeft" align="right" valign="top">const byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab1aa63cecb92e464e38af0e49aff15b0">analogPin</a> = A5</td></tr>
+<tr class="memdesc:ab1aa63cecb92e464e38af0e49aff15b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pin analógico para lectura general.  <br /></td></tr>
 <tr class="memitem:a1ba1fa42369ca4918bc2589809b96f92" id="r_a1ba1fa42369ca4918bc2589809b96f92"><td class="memItemLeft" align="right" valign="top"><a id="a1ba1fa42369ca4918bc2589809b96f92" name="a1ba1fa42369ca4918bc2589809b96f92"></a>
 unsigned short&#160;</td><td class="memItemRight" valign="bottom"><b>analogValue</b> = 0</td></tr>
+<tr class="memdesc:a1ba1fa42369ca4918bc2589809b96f92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Valor leído desde el pin analógico. <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>THERMAL COMFORT SYSTEM using Arduino. </p>
-<p>This file contains the main code for a monitoring and security system that uses an LCD, keypad, LEDs, light sensors, temperature and humidity sensors, and a Hall sensor. It uses a state machine and asynchronous tasks. </p>
-</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
-<a id="a95dff096b1e5aba5529008c9e32ce8fa" name="a95dff096b1e5aba5529008c9e32ce8fa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a95dff096b1e5aba5529008c9e32ce8fa">&#9670;&#160;</a></span>failMelody()</h2>
+<div class="textblock"><p>Main Arduino sketch for thermal comfort and access control. </p>
+</div><a name="doc-define-members" id="doc-define-members"></a><h2 id="header-doc-define-members" class="groupheader">Macro Definition Documentation</h2>
+<a id="abc2ad14f0789907024ac765711ffd3da" name="abc2ad14f0789907024ac765711ffd3da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abc2ad14f0789907024ac765711ffd3da">&#9670;&#160;</a></span>BUTTON_PIN</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define BUTTON_PIN&#160;&#160;&#160;6</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Pin de entrada para el botón. </p>
+<p>Este botón puede usarse para interacciones del usuario, como aceptar o cancelar. </p>
+
+</div>
+</div>
+<a id="a2c509dba12bba99883a5be9341b7a0c5" name="a2c509dba12bba99883a5be9341b7a0c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c509dba12bba99883a5be9341b7a0c5">&#9670;&#160;</a></span>DHTTYPE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DHTTYPE&#160;&#160;&#160;DHT11</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Tipo de sensor de temperatura y humedad utilizado. </p>
+<p>Se usa un DHT11, aunque se puede cambiar por otro modelo </p>
+
+</div>
+</div>
+<a id="ae2e40566d27689f8581d7b0f12271d45" name="ae2e40566d27689f8581d7b0f12271d45"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2e40566d27689f8581d7b0f12271d45">&#9670;&#160;</a></span>LED_BLUE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LED_BLUE&#160;&#160;&#160;8</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Pin del LED azul </p>
+
+</div>
+</div>
+<a id="aca338dbd19d7940923334629f6e5f3b7" name="aca338dbd19d7940923334629f6e5f3b7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aca338dbd19d7940923334629f6e5f3b7">&#9670;&#160;</a></span>LED_GREEN</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LED_GREEN&#160;&#160;&#160;9</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Pin del LED verde </p>
+
+</div>
+</div>
+<a id="a31e20330f8ce94e0dd10b005a15c5898" name="a31e20330f8ce94e0dd10b005a15c5898"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a31e20330f8ce94e0dd10b005a15c5898">&#9670;&#160;</a></span>LED_RED</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LED_RED&#160;&#160;&#160;10</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Pines de los LEDs indicadores. </p>
+<p>Estos pines controlan los LEDs rojo, verde y azul, que pueden usarse para mostrar estados del sistema. Pin del LED rojo </p>
+
+</div>
+</div>
+<a name="doc-enum-members" id="doc-enum-members"></a><h2 id="header-doc-enum-members" class="groupheader">Enumeration Type Documentation</h2>
+<a id="a080a822f0093973313bd644e517a5090" name="a080a822f0093973313bd644e517a5090"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a080a822f0093973313bd644e517a5090">&#9670;&#160;</a></span>Input</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#a080a822f0093973313bd644e517a5090">Input</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Entradas posibles que controlan las transiciones entre estados. </p>
+<p>Estas entradas representan eventos o condiciones leídas por el sistema. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a080a822f0093973313bd644e517a5090a340e34ccdf26079f44b98a706bd61c9d" name="a080a822f0093973313bd644e517a5090a340e34ccdf26079f44b98a706bd61c9d"></a>time&#160;</td><td class="fielddoc"><p>Tiempo transcurrido para cambiar de estado. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a080a822f0093973313bd644e517a5090abda7e67e4a52f6bee40c1949024922cd" name="a080a822f0093973313bd644e517a5090abda7e67e4a52f6bee40c1949024922cd"></a>claveCorrecta&#160;</td><td class="fielddoc"><p>Contraseña correctamente ingresada. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a080a822f0093973313bd644e517a5090afec250bdd5d926f210bc64239f7bde95" name="a080a822f0093973313bd644e517a5090afec250bdd5d926f210bc64239f7bde95"></a>systemBlock&#160;</td><td class="fielddoc"><p>Evento que indica solicitud de bloqueo del sistema. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a080a822f0093973313bd644e517a5090a0e43a7c6c672ad2ca637e2c16fbef930" name="a080a822f0093973313bd644e517a5090a0e43a7c6c672ad2ca637e2c16fbef930"></a>btnPress&#160;</td><td class="fielddoc"><p>Presión de botón físico. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a080a822f0093973313bd644e517a5090a0ecb68c818d7071f3e97f5360101cb20" name="a080a822f0093973313bd644e517a5090a0ecb68c818d7071f3e97f5360101cb20"></a>hallExceeded&#160;</td><td class="fielddoc"><p>Activación del sensor Hall por campo magnético. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a080a822f0093973313bd644e517a5090a6127b24a8433ecd1dd4c447a59373352" name="a080a822f0093973313bd644e517a5090a6127b24a8433ecd1dd4c447a59373352"></a>tempLightExceeded&#160;</td><td class="fielddoc"><p>Exceso de temperatura o luz. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a080a822f0093973313bd644e517a5090afed086211b9b070683fc413fa3571074" name="a080a822f0093973313bd644e517a5090afed086211b9b070683fc413fa3571074"></a>infraZero&#160;</td><td class="fielddoc"><p>Ausencia detectada por el sensor infrarrojo. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a080a822f0093973313bd644e517a5090a5d59dc59a8cbefd4f79e58b6db8bb5e8" name="a080a822f0093973313bd644e517a5090a5d59dc59a8cbefd4f79e58b6db8bb5e8"></a>sensores&#160;</td><td class="fielddoc"><p>Evento general de sensores. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a080a822f0093973313bd644e517a5090a5b9f6d065e6e98483b3d3ed01f4f6cbe" name="a080a822f0093973313bd644e517a5090a5b9f6d065e6e98483b3d3ed01f4f6cbe"></a>unknown&#160;</td><td class="fielddoc"><p>Entrada desconocida o no inicializada. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a id="a5d74787dedbc4e11c1ab15bf487e61f8" name="a5d74787dedbc4e11c1ab15bf487e61f8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5d74787dedbc4e11c1ab15bf487e61f8">&#9670;&#160;</a></span>State</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#a5d74787dedbc4e11c1ab15bf487e61f8">State</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Estados definidos en la máquina de estados. </p>
+<p>Cada estado representa una condición funcional del sistema. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a5d74787dedbc4e11c1ab15bf487e61f8a7429777ed105978c319dd77880e3854a" name="a5d74787dedbc4e11c1ab15bf487e61f8a7429777ed105978c319dd77880e3854a"></a>Inicio&#160;</td><td class="fielddoc"><p>Estado inicial del sistema. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a5d74787dedbc4e11c1ab15bf487e61f8ac8f22abd5e82f836dbc3bee2361b9fe2" name="a5d74787dedbc4e11c1ab15bf487e61f8ac8f22abd5e82f836dbc3bee2361b9fe2"></a>AlarmaRed&#160;</td><td class="fielddoc"><p>Activación de alarma por condiciones ambientales. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a5d74787dedbc4e11c1ab15bf487e61f8a27065b1d10618b5ec21c484440657d45" name="a5d74787dedbc4e11c1ab15bf487e61f8a27065b1d10618b5ec21c484440657d45"></a>MonitorAmbiental&#160;</td><td class="fielddoc"><p>Monitoreo de temperatura, luz y humedad. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a5d74787dedbc4e11c1ab15bf487e61f8a0ea3f164381b6783fd29ed1552487147" name="a5d74787dedbc4e11c1ab15bf487e61f8a0ea3f164381b6783fd29ed1552487147"></a>Bloqueo&#160;</td><td class="fielddoc"><p>Estado de bloqueo por seguridad. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a5d74787dedbc4e11c1ab15bf487e61f8a5853b2d9804fc5a6d3d1948c978c6dcb" name="a5d74787dedbc4e11c1ab15bf487e61f8a5853b2d9804fc5a6d3d1948c978c6dcb"></a>Alarma&#160;</td><td class="fielddoc"><p>Alarma activada por sensores específicos. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a5d74787dedbc4e11c1ab15bf487e61f8aac40392c8d00cac86ac30c30dbbc28ae" name="a5d74787dedbc4e11c1ab15bf487e61f8aac40392c8d00cac86ac30c30dbbc28ae"></a>MonitorEventos&#160;</td><td class="fielddoc"><p>Monitoreo de eventos adicionales como Hall o infrarrojo. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="a21a92ae381482abd260238eb23e1b685" name="a21a92ae381482abd260238eb23e1b685"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a21a92ae381482abd260238eb23e1b685">&#9670;&#160;</a></span>claCorrecta()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void claCorrecta </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Indicación visual y sonora de contraseña correcta. </p>
+<p>Limpia el LCD, muestra mensajes de éxito, enciende el LED verde y reproduce la melodía de validación. </p>
+
+</div>
+</div>
+<a id="a941768364650a2b2b243661f317684d5" name="a941768364650a2b2b243661f317684d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a941768364650a2b2b243661f317684d5">&#9670;&#160;</a></span>comparar()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool comparar </td>
+          <td>(</td>
+          <td class="paramtype">char</td>          <td class="paramname"><span class="paramname"><em>vector1</em></span>[], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char</td>          <td class="paramname"><span class="paramname"><em>vector2</em></span>[], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>longitud</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compara dos vectores de caracteres para verificar igualdad. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">vector1</td><td>Primer vector a comparar. </td></tr>
+    <tr><td class="paramname">vector2</td><td>Segundo vector a comparar. </td></tr>
+    <tr><td class="paramname">longitud</td><td>Número de caracteres a comparar. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true si todos los caracteres coinciden, false en caso contrario. </dd></dl>
+
+</div>
+</div>
+<a id="a138a5df6fd93cd0d4920195c4b9e7ee5" name="a138a5df6fd93cd0d4920195c4b9e7ee5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a138a5df6fd93cd0d4920195c4b9e7ee5">&#9670;&#160;</a></span>failMelody()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -587,13 +827,158 @@ unsigned short&#160;</td><td class="memItemRight" valign="bottom"><b>analogValue
       </table>
 </div><div class="memdoc">
 
-<p>Plays the melody for a failed operation. </p>
+<p>Reproduce una melodía de error o fallo. </p>
+<p>Plays the melody for a failed operation.</p>
 <p>This function plays a series of tones on the buzzer representing a failure melody. </p>
 
 </div>
 </div>
-<a id="a797da1c93a3b2797e7d236afa416c4ca" name="a797da1c93a3b2797e7d236afa416c4ca"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a797da1c93a3b2797e7d236afa416c4ca">&#9670;&#160;</a></span>melodyExecutable()</h2>
+<a id="a573f2761e3b9df7871acae505f73bf66" name="a573f2761e3b9df7871acae505f73bf66"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a573f2761e3b9df7871acae505f73bf66">&#9670;&#160;</a></span>leavingAlarma()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void leavingAlarma </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Acción al salir del estado Alarma. </p>
+<p>Detiene la melodía y la señal visual azul, limpia el LCD y detiene el temporizador. </p>
+
+</div>
+</div>
+<a id="a925ceb72f88fdcde2c4e8eb7bca28dc7" name="a925ceb72f88fdcde2c4e8eb7bca28dc7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a925ceb72f88fdcde2c4e8eb7bca28dc7">&#9670;&#160;</a></span>leavingAlarmaRed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void leavingAlarmaRed </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Acción al salir del estado AlarmaRed. </p>
+<p>Detiene tareas de alerta por sensor, apaga el LED rojo y limpia la pantalla. </p>
+
+</div>
+</div>
+<a id="a4fc93deb0172ff2e6ace163b32ce1b94" name="a4fc93deb0172ff2e6ace163b32ce1b94"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4fc93deb0172ff2e6ace163b32ce1b94">&#9670;&#160;</a></span>leavingAmbiental()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void leavingAmbiental </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Acción al salir del estado MonitorAmbiental. </p>
+<p>Detiene todas las tareas asociadas a sensores ambientales y borra el LCD. </p>
+
+</div>
+</div>
+<a id="ac64caf9be4457ff753ce6899ba860133" name="ac64caf9be4457ff753ce6899ba860133"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac64caf9be4457ff753ce6899ba860133">&#9670;&#160;</a></span>leavingBloqueo()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void leavingBloqueo </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Acción al salir del estado Bloqueo. </p>
+<p>Detiene las tareas de bloqueo y la melodía de fallo, limpia la pantalla y apaga el LED rojo. </p>
+
+</div>
+</div>
+<a id="a953cfc9dea5c65b30aa125ae96867cfb" name="a953cfc9dea5c65b30aa125ae96867cfb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a953cfc9dea5c65b30aa125ae96867cfb">&#9670;&#160;</a></span>leavingEventos()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void leavingEventos </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Acción al salir del estado MonitorEventos. </p>
+<p>Finaliza todas las tareas relacionadas con eventos externos y borra el temporizador. </p>
+
+</div>
+</div>
+<a id="adb1596ab0791393080cb3ad5372c36c5" name="adb1596ab0791393080cb3ad5372c36c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adb1596ab0791393080cb3ad5372c36c5">&#9670;&#160;</a></span>leavingInicio()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void leavingInicio </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Acción al salir del estado Inicio. </p>
+<p>Detiene tareas relacionadas con la seguridad y el temporizador de transición inicial. </p>
+
+</div>
+</div>
+<a id="afe461d27b9c48d5921c00d521181f12f" name="afe461d27b9c48d5921c00d521181f12f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe461d27b9c48d5921c00d521181f12f">&#9670;&#160;</a></span>loop()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void loop </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Bucle principal del sistema, ejecuta la lógica repetitiva. </p>
+<ul>
+<li>Lee tarjetas RFID y determina el acceso autorizado o denegado.</li>
+<li>Actualiza tareas asincrónicas relacionadas con sensores, seguridad, y alarmas.</li>
+<li>Actualiza la máquina de estados y restablece la entrada de control. </li>
+</ul>
+
+</div>
+</div>
+<a id="ab237cf233c439d830f2a5b9ac479c35b" name="ab237cf233c439d830f2a5b9ac479c35b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab237cf233c439d830f2a5b9ac479c35b">&#9670;&#160;</a></span>melodyExecutable()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -607,13 +992,134 @@ unsigned short&#160;</td><td class="memItemRight" valign="bottom"><b>analogValue
       </table>
 </div><div class="memdoc">
 
-<p>Plays the melody for a successful operation. </p>
+<p>Ejecuta la reproducción de una melodía desde la cola de acciones. </p>
+<p>Plays the melody for a successful operation.</p>
 <p>This function plays a series of tones on the buzzer representing a success melody. </p>
 
 </div>
 </div>
-<a id="ad28c57857c0360f1b99b9aeaee0c4249" name="ad28c57857c0360f1b99b9aeaee0c4249"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad28c57857c0360f1b99b9aeaee0c4249">&#9670;&#160;</a></span>printEventosLcd()</h2>
+<a id="aab9c5b060d49c9eae5717f5303a1984d" name="aab9c5b060d49c9eae5717f5303a1984d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aab9c5b060d49c9eae5717f5303a1984d">&#9670;&#160;</a></span>outputAlarma()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void outputAlarma </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Acción al entrar en el estado Alarma. </p>
+<p>Ejecuta las tareas de notificación sonora y visual mediante LED azul, y vigila condiciones ambientales mientras espera tiempo para volver. </p>
+
+</div>
+</div>
+<a id="a7131b3416e5abd8e0fc3d76f399ef2a7" name="a7131b3416e5abd8e0fc3d76f399ef2a7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7131b3416e5abd8e0fc3d76f399ef2a7">&#9670;&#160;</a></span>outputAlarmaRed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void outputAlarmaRed </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Acción al entrar en el estado AlarmaRed. </p>
+<p>Activa alarmas visuales y sonoras específicas de alerta roja, así como monitoreo por botón para salir de la condición. </p>
+
+</div>
+</div>
+<a id="ae7f7255177511950ea5ff9086d20a9ef" name="ae7f7255177511950ea5ff9086d20a9ef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7f7255177511950ea5ff9086d20a9ef">&#9670;&#160;</a></span>outputBloqueo()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void outputBloqueo </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Acción al entrar en el estado Bloqueo. </p>
+<p>Activa las tareas asociadas al bloqueo, melodía de fallo y validación de condiciones ambientales críticas. </p>
+
+</div>
+</div>
+<a id="a390833d0072e6440c9707a25c053dfb3" name="a390833d0072e6440c9707a25c053dfb3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a390833d0072e6440c9707a25c053dfb3">&#9670;&#160;</a></span>outputInicio()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void outputInicio </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Acción al entrar en el estado Inicio. </p>
+<p>Reinicia contadores de intentos de acceso, lanza la tarea de seguridad y muestra el indicador de estado en la consola serial. </p>
+
+</div>
+</div>
+<a id="a3b64b265de658a850b70593cbd078c73" name="a3b64b265de658a850b70593cbd078c73"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3b64b265de658a850b70593cbd078c73">&#9670;&#160;</a></span>outputMAmbiental()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void outputMAmbiental </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Acción al entrar en el estado MonitorAmbiental. </p>
+<p>Inicia tareas relacionadas con sensores ambientales y visualización en el LCD. Ajusta la frecuencia de lectura de tiempo. </p>
+
+</div>
+</div>
+<a id="a75cf38a436812a027332067cad2c2a55" name="a75cf38a436812a027332067cad2c2a55"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a75cf38a436812a027332067cad2c2a55">&#9670;&#160;</a></span>outputMEventos()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void outputMEventos </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Acción al entrar en el estado MonitorEventos. </p>
+<p>Inicia las tareas que supervisan eventos relacionados con sensores como Hall e infrarrojo. También muestra la sección correspondiente en consola e inicia validaciones de límites. </p>
+
+</div>
+</div>
+<a id="a4ab48e0867885aa42fb60b0fbc012bdb" name="a4ab48e0867885aa42fb60b0fbc012bdb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ab48e0867885aa42fb60b0fbc012bdb">&#9670;&#160;</a></span>printEventosLcd()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -627,13 +1133,14 @@ unsigned short&#160;</td><td class="memItemRight" valign="bottom"><b>analogValue
       </table>
 </div><div class="memdoc">
 
-<p>Prints the hall and InfraRed sensor value on the LCD screen. </p>
+<p>Muestra en pantalla información relacionada con eventos del sistema. </p>
+<p>Prints the hall and InfraRed sensor value on the LCD screen.</p>
 <p>This function clears the LCD screen and prints the hall and InfraRed sensor value. </p>
 
 </div>
 </div>
-<a id="a3a864b0ace7b5561936b913da3ace09c" name="a3a864b0ace7b5561936b913da3ace09c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3a864b0ace7b5561936b913da3ace09c">&#9670;&#160;</a></span>printSensorsLcd()</h2>
+<a id="a30b808802c793c08428a88e57bd780f3" name="a30b808802c793c08428a88e57bd780f3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a30b808802c793c08428a88e57bd780f3">&#9670;&#160;</a></span>printSensorsLcd()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -647,13 +1154,14 @@ unsigned short&#160;</td><td class="memItemRight" valign="bottom"><b>analogValue
       </table>
 </div><div class="memdoc">
 
-<p>Prints the sensor values on the LCD screen. </p>
+<p>Muestra en pantalla los datos de los sensores ambientales. </p>
+<p>Prints the sensor values on the LCD screen.</p>
 <p>This function clears the LCD screen and prints the temperature, humidity, and light sensor values. </p>
 
 </div>
 </div>
-<a id="afe62d1aa4c77687ac79a19480940652a" name="afe62d1aa4c77687ac79a19480940652a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afe62d1aa4c77687ac79a19480940652a">&#9670;&#160;</a></span>readBluelight()</h2>
+<a id="acf1ac06366948d067088590143368691" name="acf1ac06366948d067088590143368691"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acf1ac06366948d067088590143368691">&#9670;&#160;</a></span>readBluelight()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -667,13 +1175,139 @@ unsigned short&#160;</td><td class="memItemRight" valign="bottom"><b>analogValue
       </table>
 </div><div class="memdoc">
 
-<p>Activates the blue light and displays an alarm message on the LCD screen. </p>
+<p>Controla la activación de la luz azul de retroalimentación. </p>
+<p>Activates the blue light and displays an alarm message on the LCD screen.</p>
 <p>This function clears the LCD screen, displays an alarm message, and turns on the blue LED. </p>
 
 </div>
 </div>
-<a id="a5bb8d38158d73e157e2f9ddcd7e9257c" name="a5bb8d38158d73e157e2f9ddcd7e9257c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5bb8d38158d73e157e2f9ddcd7e9257c">&#9670;&#160;</a></span>readRedlight()</h2>
+<a id="a564c61ed91865edf885ca15ea6158e21" name="a564c61ed91865edf885ca15ea6158e21"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a564c61ed91865edf885ca15ea6158e21">&#9670;&#160;</a></span>readButton()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void readButton </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Lee el estado del botón físico del sistema. </p>
+<p>Lee la entrada desde el teclado para detectar una interacción del usuario.</p>
+<p>Si se presiona la tecla '*', se considera una señal de botón físico y se actualiza la entrada como <span class="tt">Input::btnPress</span>. </p>
+
+</div>
+</div>
+<a id="a4cccd36d6ab97de0d6f11679028ffb7f" name="a4cccd36d6ab97de0d6f11679028ffb7f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4cccd36d6ab97de0d6f11679028ffb7f">&#9670;&#160;</a></span>readHall()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void readHall </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Lee el valor del sensor de efecto Hall. </p>
+<p>Actualiza la variable global <span class="tt">valueHall</span> con el valor analógico leído del pin definido como <span class="tt">pinHall</span>. </p>
+
+</div>
+</div>
+<a id="a04d12c84af80cf74600b2255f3e382d1" name="a04d12c84af80cf74600b2255f3e382d1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a04d12c84af80cf74600b2255f3e382d1">&#9670;&#160;</a></span>readHum()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void readHum </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Lee el valor de humedad desde el sensor DHT. </p>
+<p>Lee el valor de humedad relativa desde el sensor DHT.</p>
+<p>Actualiza la variable global <span class="tt">hum</span>. Si falla la lectura, imprime un mensaje de error por consola. </p>
+
+</div>
+</div>
+<a id="a659e340500031c5d081f22ff875a10b8" name="a659e340500031c5d081f22ff875a10b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a659e340500031c5d081f22ff875a10b8">&#9670;&#160;</a></span>readInfra()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void readInfra </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Lee el estado del sensor infrarrojo. </p>
+<p>Lee el estado del sensor infrarrojo digital.</p>
+<p>Almacena el valor lógico del pin asociado al sensor en la variable global <span class="tt">sensorState</span>. </p>
+
+</div>
+</div>
+<a id="ab6093d341506a46f4e859c24287f7c2a" name="ab6093d341506a46f4e859c24287f7c2a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6093d341506a46f4e859c24287f7c2a">&#9670;&#160;</a></span>readLight()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void readLight </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Lee el valor del sensor de luz y actualiza la variable correspondiente. </p>
+<p>Lee el valor del sensor de luz (fotoresistor).</p>
+<p>Actualiza la variable global <span class="tt">valueLight</span> con el valor analógico leído del pin definido como <span class="tt">pinLight</span>. </p>
+
+</div>
+</div>
+<a id="a2940ebe54efe84944652355589b94b09" name="a2940ebe54efe84944652355589b94b09"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2940ebe54efe84944652355589b94b09">&#9670;&#160;</a></span>readPMV()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">byte readPMV </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Lee el valor de una variable específica del sistema. </p>
+<p>Actualmente, esta función devuelve 0. Puede expandirse para leer configuraciones almacenadas.</p>
+<dl class="section return"><dt>Returns</dt><dd>Valor leído (actualmente siempre es 0). </dd></dl>
+
+</div>
+</div>
+<a id="ae1da010212562ae696ab167800d5d77e" name="ae1da010212562ae696ab167800d5d77e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae1da010212562ae696ab167800d5d77e">&#9670;&#160;</a></span>readRedlight()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -687,13 +1321,97 @@ unsigned short&#160;</td><td class="memItemRight" valign="bottom"><b>analogValue
       </table>
 </div><div class="memdoc">
 
-<p>Activates the blue light and displays an alarm message on the LCD screen. </p>
+<p>Controla la activación de la luz roja de advertencia. </p>
+<p>Activates the blue light and displays an alarm message on the LCD screen.</p>
 <p>This function clears the LCD screen, displays an alarm message, and turns on the Red LED. </p>
 
 </div>
 </div>
-<a id="a99b5c5ce9ad44625c550694471a6f2eb" name="a99b5c5ce9ad44625c550694471a6f2eb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a99b5c5ce9ad44625c550694471a6f2eb">&#9670;&#160;</a></span>resetAlarmCount()</h2>
+<a id="a954e38faa9405f0a332c185a58479f72" name="a954e38faa9405f0a332c185a58479f72"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a954e38faa9405f0a332c185a58479f72">&#9670;&#160;</a></span>readTarget()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">short readTarget </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Lee una tarjeta RFID y retorna su valor asignado. </p>
+<p>La función verifica si una tarjeta está presente y compara su UID con tarjetas registradas. Si la tarjeta es reconocida, devuelve su valor asignado.</p>
+<dl class="section return"><dt>Returns</dt><dd>Valor de la tarjeta si es reconocida. Si no se detecta o no coincide, retorna -5. </dd></dl>
+
+</div>
+</div>
+<a id="a9f7e4fd61f32e03b0d08616bccb066de" name="a9f7e4fd61f32e03b0d08616bccb066de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f7e4fd61f32e03b0d08616bccb066de">&#9670;&#160;</a></span>readTemp()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void readTemp </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Lee el valor del sensor de temperatura (NTC o DHT) y lo almacena. </p>
+<p>Lee la temperatura a partir de un NTC conectado al pin <span class="tt">pinTemp</span>.</p>
+<p>Calcula la temperatura en grados Celsius utilizando la fórmula de la ecuación de Steinhart-Hart y almacena el valor en la variable global <span class="tt">temp</span>. </p>
+
+</div>
+</div>
+<a id="a81c7b75337016da4b71b621f83d594c0" name="a81c7b75337016da4b71b621f83d594c0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a81c7b75337016da4b71b621f83d594c0">&#9670;&#160;</a></span>readTime()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void readTime </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Actualiza el reloj interno o el control de tiempo de la FSM. </p>
+<p>Genera una entrada de tiempo para la máquina de estados.</p>
+<p>Esta función marca la entrada como <span class="tt">Input::time</span> para permitir transiciones temporizadas y detiene la tarea asociada al temporizador principal. </p>
+
+</div>
+</div>
+<a id="a1b3c4fa5c2839b01f0e3e9c94c364cf5" name="a1b3c4fa5c2839b01f0e3e9c94c364cf5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b3c4fa5c2839b01f0e3e9c94c364cf5">&#9670;&#160;</a></span>registerTarget()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void registerTarget </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Registra una nueva tarjeta RFID en el sistema. </p>
+<p>La función espera a que se acerque una tarjeta, lee su UID y muestra el bloque necesario para añadirla manualmente al array <span class="tt">tarjetasConocidas</span>. </p>
+
+</div>
+</div>
+<a id="a4dd71cdad15e494749af703339f49935" name="a4dd71cdad15e494749af703339f49935"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4dd71cdad15e494749af703339f49935">&#9670;&#160;</a></span>resetAlarmCount()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -707,13 +1425,140 @@ unsigned short&#160;</td><td class="memItemRight" valign="bottom"><b>analogValue
       </table>
 </div><div class="memdoc">
 
-<p>Reset alarm Count. </p>
+<p>Reinicia el contador de alarmas acumuladas. </p>
+<p>Reset alarm Count.</p>
 <p>This function reset the alarm Count. </p>
 
 </div>
 </div>
-<a id="ae21538b2c217ad471b2ea263c036c56a" name="ae21538b2c217ad471b2ea263c036c56a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae21538b2c217ad471b2ea263c036c56a">&#9670;&#160;</a></span>successMelody()</h2>
+<a id="a5883e2c9d55def93387501c2a17c1a41" name="a5883e2c9d55def93387501c2a17c1a41"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5883e2c9d55def93387501c2a17c1a41">&#9670;&#160;</a></span>seguridad()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void seguridad </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Control de seguridad para validar el acceso por contraseña. </p>
+<p>Maneja el ingreso de la contraseña por parte del usuario.</p>
+<p>Lee la entrada desde el teclado matricial, la compara con la contraseña almacenada y determina si el acceso es válido. Si hay tres intentos fallidos, se bloquea el sistema. Además, gestiona el tiempo límite para la entrada del usuario y muestra asteriscos como feedback. </p>
+
+</div>
+</div>
+<a id="a4fc01d736fe50cf5b977f755b675f11d" name="a4fc01d736fe50cf5b977f755b675f11d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4fc01d736fe50cf5b977f755b675f11d">&#9670;&#160;</a></span>setup()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void setup </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Inicializa el sistema y todos sus componentes. </p>
+<p>Configura los pines de entrada/salida, inicia la comunicación serial, configura el LCD, inicializa el sensor DHT, el lector RFID, y establece el estado inicial de la máquina de estados. </p>
+
+</div>
+</div>
+<a id="a59284ce8f9a9bf013dbfed2be0a06b63" name="a59284ce8f9a9bf013dbfed2be0a06b63"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a59284ce8f9a9bf013dbfed2be0a06b63">&#9670;&#160;</a></span>setupRFID()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void setupRFID </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Inicializa el módulo RFID MFRC522. </p>
+<p>Esta función configura la comunicación SPI y activa el lector RFID. Se debe llamar una vez al inicio del sistema para que el módulo funcione correctamente. </p>
+
+</div>
+</div>
+<a id="a0f66d65ae208fa0a707755d77441dd5f" name="a0f66d65ae208fa0a707755d77441dd5f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f66d65ae208fa0a707755d77441dd5f">&#9670;&#160;</a></span>setupStateMachine()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void setupStateMachine </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Configura la máquina de estados del sistema. </p>
+<p>Define las transiciones posibles entre estados en función de entradas, y establece funciones para ejecutar al entrar o salir de cada estado. </p>
+
+</div>
+</div>
+<a id="a255cd17346e3810e05deecd13b5b273a" name="a255cd17346e3810e05deecd13b5b273a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a255cd17346e3810e05deecd13b5b273a">&#9670;&#160;</a></span>sisBloqueado()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sisBloqueado </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Ejecuta la rutina visual y sonora del estado de bloqueo. </p>
+<p>Función de bloqueo del sistema.</p>
+<p>Muestra en pantalla y consola que el sistema está bloqueado y enciende el LED rojo. </p>
+
+</div>
+</div>
+<a id="a4d2ec6fd3a1844c88c33f1521df53a1d" name="a4d2ec6fd3a1844c88c33f1521df53a1d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4d2ec6fd3a1844c88c33f1521df53a1d">&#9670;&#160;</a></span>stateMachine()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">StateMachine stateMachine </td>
+          <td>(</td>
+          <td class="paramtype">6</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">12</td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Objeto principal de la máquina de estados. </p>
+<p>Se configura con 6 estados y hasta 12 entradas distintas. </p>
+
+</div>
+</div>
+<a id="a4d97e660d0bc81893106854d12f07a6a" name="a4d97e660d0bc81893106854d12f07a6a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4d97e660d0bc81893106854d12f07a6a">&#9670;&#160;</a></span>successMelody()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -727,13 +1572,529 @@ unsigned short&#160;</td><td class="memItemRight" valign="bottom"><b>analogValue
       </table>
 </div><div class="memdoc">
 
-<p>Plays the melody for a successful operation. </p>
+<p>Reproduce una melodía de confirmación de éxito. </p>
+<p>Plays the melody for a successful operation.</p>
 <p>This function plays a series of tones on the buzzer representing a success melody. </p>
 
 </div>
 </div>
-<a id="affe9739dec91f3e1073697c086595591" name="affe9739dec91f3e1073697c086595591"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#affe9739dec91f3e1073697c086595591">&#9670;&#160;</a></span>verifyHallLimit()</h2>
+<a id="a213c22e45c96fcfd502f2a25f8a91e7c" name="a213c22e45c96fcfd502f2a25f8a91e7c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a213c22e45c96fcfd502f2a25f8a91e7c">&#9670;&#160;</a></span>taskBloqueo()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AsyncTask taskBloqueo </td>
+          <td>(</td>
+          <td class="paramtype">500</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">false</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#a255cd17346e3810e05deecd13b5b273a">sisBloqueado</a></td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Ejecuta rutina de bloqueo. </p>
+
+</div>
+</div>
+<a id="ac5d0fc29860057dbc96e5963dcd3aecc" name="ac5d0fc29860057dbc96e5963dcd3aecc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac5d0fc29860057dbc96e5963dcd3aecc">&#9670;&#160;</a></span>taskBlueLight()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AsyncTask taskBlueLight </td>
+          <td>(</td>
+          <td class="paramtype">400</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">true</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#acf1ac06366948d067088590143368691">readBluelight</a></td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Controla luz azul. </p>
+
+</div>
+</div>
+<a id="ad3c6ed6f67fe7c1af6f8cce64c251542" name="ad3c6ed6f67fe7c1af6f8cce64c251542"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad3c6ed6f67fe7c1af6f8cce64c251542">&#9670;&#160;</a></span>taskHallLimits()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AsyncTask taskHallLimits </td>
+          <td>(</td>
+          <td class="paramtype">1000</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">true</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#a3a09ad03707522fd0b26cc634fcd36c3">verifyHallLimit</a></td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Verifica límite del sensor Hall. </p>
+
+</div>
+</div>
+<a id="a1d043e5a9d9244c2c2d51a149add760a" name="a1d043e5a9d9244c2c2d51a149add760a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1d043e5a9d9244c2c2d51a149add760a">&#9670;&#160;</a></span>taskInfraAct()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AsyncTask taskInfraAct </td>
+          <td>(</td>
+          <td class="paramtype">1000</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">true</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#a97c68f9d61cfebbd696391e4c010ce05">verifyInfraLimit</a></td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Verifica actividad del IR. </p>
+
+</div>
+</div>
+<a id="a0cca4621b2fd4420a252445f877fb884" name="a0cca4621b2fd4420a252445f877fb884"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0cca4621b2fd4420a252445f877fb884">&#9670;&#160;</a></span>taskMelody()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AsyncTask taskMelody </td>
+          <td>(</td>
+          <td class="paramtype">800</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">false</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#ab237cf233c439d830f2a5b9ac479c35b">melodyExecutable</a></td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Ejecuta melodía programada. </p>
+
+</div>
+</div>
+<a id="a444b04ea9165e123f1faf989aae249fc" name="a444b04ea9165e123f1faf989aae249fc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a444b04ea9165e123f1faf989aae249fc">&#9670;&#160;</a></span>taskMelodyFail()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AsyncTask taskMelodyFail </td>
+          <td>(</td>
+          <td class="paramtype">800</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">false</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#a138a5df6fd93cd0d4920195c4b9e7ee5">failMelody</a></td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Reproduce melodía de error. </p>
+
+</div>
+</div>
+<a id="aea07ee33b5396d48fecaff862b955264" name="aea07ee33b5396d48fecaff862b955264"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea07ee33b5396d48fecaff862b955264">&#9670;&#160;</a></span>taskMelodySuccess()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AsyncTask taskMelodySuccess </td>
+          <td>(</td>
+          <td class="paramtype">800</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">false</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#a4d97e660d0bc81893106854d12f07a6a">successMelody</a></td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Reproduce melodía de éxito. </p>
+
+</div>
+</div>
+<a id="adcc47f609c1cd0acb86cfe79a0ed376c" name="adcc47f609c1cd0acb86cfe79a0ed376c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adcc47f609c1cd0acb86cfe79a0ed376c">&#9670;&#160;</a></span>taskPrintEventosLcd()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AsyncTask taskPrintEventosLcd </td>
+          <td>(</td>
+          <td class="paramtype">1000</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">true</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#a4ab48e0867885aa42fb60b0fbc012bdb">printEventosLcd</a></td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Muestra eventos en LCD. </p>
+
+</div>
+</div>
+<a id="adaa579cb7baf8804a5b39a1ab702a042" name="adaa579cb7baf8804a5b39a1ab702a042"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adaa579cb7baf8804a5b39a1ab702a042">&#9670;&#160;</a></span>taskPrintLcd()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AsyncTask taskPrintLcd </td>
+          <td>(</td>
+          <td class="paramtype">1000</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">true</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#a30b808802c793c08428a88e57bd780f3">printSensorsLcd</a></td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Muestra datos de sensores. </p>
+
+</div>
+</div>
+<a id="ade46c88eba23a6e30aba9ff3abc51d9d" name="ade46c88eba23a6e30aba9ff3abc51d9d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ade46c88eba23a6e30aba9ff3abc51d9d">&#9670;&#160;</a></span>taskReadButton()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AsyncTask taskReadButton </td>
+          <td>(</td>
+          <td class="paramtype">100</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">true</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#a564c61ed91865edf885ca15ea6158e21">readButton</a></td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Lee botón cada 100ms. </p>
+
+</div>
+</div>
+<a id="ac2de211b819b5898024e47412a376653" name="ac2de211b819b5898024e47412a376653"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac2de211b819b5898024e47412a376653">&#9670;&#160;</a></span>taskReadHall()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AsyncTask taskReadHall </td>
+          <td>(</td>
+          <td class="paramtype">1000</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">true</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#a4cccd36d6ab97de0d6f11679028ffb7f">readHall</a></td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Lee el sensor Hall cada 1s. </p>
+
+</div>
+</div>
+<a id="a71cc905cc1e853c92cb27573519f19c3" name="a71cc905cc1e853c92cb27573519f19c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a71cc905cc1e853c92cb27573519f19c3">&#9670;&#160;</a></span>taskReadHum()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AsyncTask taskReadHum </td>
+          <td>(</td>
+          <td class="paramtype">1000</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">true</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#a04d12c84af80cf74600b2255f3e382d1">readHum</a></td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Lee la humedad cada 1s. </p>
+
+</div>
+</div>
+<a id="a79cb6e5d7d3396d25911a87f4ee9cacf" name="a79cb6e5d7d3396d25911a87f4ee9cacf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a79cb6e5d7d3396d25911a87f4ee9cacf">&#9670;&#160;</a></span>taskReadInfra()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AsyncTask taskReadInfra </td>
+          <td>(</td>
+          <td class="paramtype">1000</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">true</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#a659e340500031c5d081f22ff875a10b8">readInfra</a></td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Lee el sensor infrarrojo cada 1s. </p>
+
+</div>
+</div>
+<a id="ad2fad14507513b513d2b9a0339fc7e6f" name="ad2fad14507513b513d2b9a0339fc7e6f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad2fad14507513b513d2b9a0339fc7e6f">&#9670;&#160;</a></span>taskReadLight()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AsyncTask taskReadLight </td>
+          <td>(</td>
+          <td class="paramtype">1000</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">true</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#ab6093d341506a46f4e859c24287f7c2a">readLight</a></td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Tareas asincrónicas que gestionan el sistema en tiempo real. </p>
+<p>Cada tarea se ejecuta con un intervalo definido y llama a funciones específicas. Algunas se reinician automáticamente (<span class="tt">true</span>) y otras son disparadas una sola vez (<span class="tt">false</span>). Lee la luz ambiental cada 1s. </p>
+
+</div>
+</div>
+<a id="acc86f8cf61a8468bdda667e166f51e35" name="acc86f8cf61a8468bdda667e166f51e35"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acc86f8cf61a8468bdda667e166f51e35">&#9670;&#160;</a></span>taskReadTemp()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AsyncTask taskReadTemp </td>
+          <td>(</td>
+          <td class="paramtype">1000</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">true</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#a9f7e4fd61f32e03b0d08616bccb066de">readTemp</a></td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Lee la temperatura cada 1s. </p>
+
+</div>
+</div>
+<a id="a490f65f2ebb36db19eff58ce79336624" name="a490f65f2ebb36db19eff58ce79336624"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a490f65f2ebb36db19eff58ce79336624">&#9670;&#160;</a></span>taskRedLight()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AsyncTask taskRedLight </td>
+          <td>(</td>
+          <td class="paramtype">400</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">true</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#ae1da010212562ae696ab167800d5d77e">readRedlight</a></td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Controla luz roja. </p>
+
+</div>
+</div>
+<a id="a7f87e069bbc40f10f9a4d376a3603a85" name="a7f87e069bbc40f10f9a4d376a3603a85"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7f87e069bbc40f10f9a4d376a3603a85">&#9670;&#160;</a></span>taskSecurity()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AsyncTask taskSecurity </td>
+          <td>(</td>
+          <td class="paramtype">1000</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">false</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#a5883e2c9d55def93387501c2a17c1a41">seguridad</a></td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Activa seguridad una vez. </p>
+
+</div>
+</div>
+<a id="a91307b37b60c63d642a1d4751209f741" name="a91307b37b60c63d642a1d4751209f741"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a91307b37b60c63d642a1d4751209f741">&#9670;&#160;</a></span>taskSetTime()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AsyncTask taskSetTime </td>
+          <td>(</td>
+          <td class="paramtype">10000</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">true</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#a81c7b75337016da4b71b621f83d594c0">readTime</a></td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Actualiza el reloj cada 10s. </p>
+
+</div>
+</div>
+<a id="a7cc4eb20fbccc33f42e313fa7df5be7d" name="a7cc4eb20fbccc33f42e313fa7df5be7d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7cc4eb20fbccc33f42e313fa7df5be7d">&#9670;&#160;</a></span>taskTempLightLimits()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AsyncTask taskTempLightLimits </td>
+          <td>(</td>
+          <td class="paramtype">1000</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">true</td>          <td class="paramname"><span class="paramname"><em></em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#a07e0305a2db088623fb7e9b11114c5f0">verifyTempLightLimits</a></td>          <td class="paramname"><span class="paramname"><em></em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Verifica límites ambientales. </p>
+
+</div>
+</div>
+<a id="a3a09ad03707522fd0b26cc634fcd36c3" name="a3a09ad03707522fd0b26cc634fcd36c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3a09ad03707522fd0b26cc634fcd36c3">&#9670;&#160;</a></span>verifyHallLimit()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -747,13 +2108,14 @@ unsigned short&#160;</td><td class="memItemRight" valign="bottom"><b>analogValue
       </table>
 </div><div class="memdoc">
 
-<p>Verifies if the hall sensor limit is exceeded. </p>
+<p>Verifica si el valor del sensor Hall supera el límite permitido. </p>
+<p>Verifies if the hall sensor limit is exceeded.</p>
 <p>This function checks if the current hall sensor value exceeds a predefined limit and sets the input state accordingly. </p>
 
 </div>
 </div>
-<a id="a656f1cefb025bbb439224bc4dd910d91" name="a656f1cefb025bbb439224bc4dd910d91"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a656f1cefb025bbb439224bc4dd910d91">&#9670;&#160;</a></span>verifyInfraLimit()</h2>
+<a id="a97c68f9d61cfebbd696391e4c010ce05" name="a97c68f9d61cfebbd696391e4c010ce05"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a97c68f9d61cfebbd696391e4c010ce05">&#9670;&#160;</a></span>verifyInfraLimit()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -767,13 +2129,14 @@ unsigned short&#160;</td><td class="memItemRight" valign="bottom"><b>analogValue
       </table>
 </div><div class="memdoc">
 
-<p>Verifies if the Infrared sensor is activated. </p>
+<p>Verifica si la señal infrarroja indica un evento anómalo. </p>
+<p>Verifies if the Infrared sensor is activated.</p>
 <p>This function checks if the current Infrared is activated and sets the input state accordingly. </p>
 
 </div>
 </div>
-<a id="ad8f842baa6f608ce4538ae215b0ed116" name="ad8f842baa6f608ce4538ae215b0ed116"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad8f842baa6f608ce4538ae215b0ed116">&#9670;&#160;</a></span>verifyTempLightLimits()</h2>
+<a id="a07e0305a2db088623fb7e9b11114c5f0" name="a07e0305a2db088623fb7e9b11114c5f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a07e0305a2db088623fb7e9b11114c5f0">&#9670;&#160;</a></span>verifyTempLightLimits()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -787,7 +2150,8 @@ unsigned short&#160;</td><td class="memItemRight" valign="bottom"><b>analogValue
       </table>
 </div><div class="memdoc">
 
-<p>Verifies if the temperature limits are exceeded. </p>
+<p>Verifica si los valores de temperatura y luz exceden los umbrales. </p>
+<p>Verifies if the temperature limits are exceeded.</p>
 <p>This function checks if the current temperature exceed predefined limits and sets the input state accordingly. </p>
 
 </div>
@@ -809,6 +2173,25 @@ unsigned short&#160;</td><td class="memItemRight" valign="bottom"><b>analogValue
 <div class="line">    NOTE_A3,</div>
 <div class="line">}</div>
 </div><!-- fragment -->
+<p>Melodía utilizada para alertas o errores. </p>
+
+</div>
+</div>
+<a id="ab1aa63cecb92e464e38af0e49aff15b0" name="ab1aa63cecb92e464e38af0e49aff15b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab1aa63cecb92e464e38af0e49aff15b0">&#9670;&#160;</a></span>analogPin</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const byte analogPin = A5</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Pin analógico para lectura general. </p>
+<p>Puede usarse para depurar señales analógicas u otros sensores. </p>
+
 </div>
 </div>
 <a id="a62b8abf11db2465102f4e2464ae97a9f" name="a62b8abf11db2465102f4e2464ae97a9f"></a>
@@ -827,6 +2210,26 @@ unsigned short&#160;</td><td class="memItemRight" valign="bottom"><b>analogValue
 <div class="line">    0, NOTE_C7, NOTE_E7, 0,</div>
 <div class="line">    NOTE_G7, 0, 0, 0}</div>
 </div><!-- fragment -->
+<p>Conjunto de melodías utilizadas en el sistema. </p>
+<p>Este módulo define arreglos de notas musicales que corresponden a diferentes eventos, como desbloqueo exitoso, errores o alarmas. </p>
+
+</div>
+</div>
+<a id="a640f93dbb6516d9404161a09b938101e" name="a640f93dbb6516d9404161a09b938101e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a640f93dbb6516d9404161a09b938101e">&#9670;&#160;</a></span>buzzer</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int buzzer = 7</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Pin de salida del buzzer. </p>
+<p>Este buzzer puede emitir sonidos de alerta o confirmación. </p>
+
 </div>
 </div>
 <a id="a5fc31934f55fe9b3a287e2b7370f4a08" name="a5fc31934f55fe9b3a287e2b7370f4a08"></a>
@@ -845,6 +2248,40 @@ unsigned short&#160;</td><td class="memItemRight" valign="bottom"><b>analogValue
 <div class="line">    200, 200, 200, 200,</div>
 <div class="line">    200, 200, 200, 200}</div>
 </div><!-- fragment -->
+<p>Duraciones de cada nota en la melodía de bloqueo. </p>
+
+</div>
+</div>
+<a id="af3563e8c83cc5097ea411eaef3c4e32c" name="af3563e8c83cc5097ea411eaef3c4e32c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af3563e8c83cc5097ea411eaef3c4e32c">&#9670;&#160;</a></span>humHigh</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int humHigh = 70</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Umbrales de humedad para generar alertas. </p>
+<p>Límite superior de humedad </p>
+
+</div>
+</div>
+<a id="abf5f34c988680bba2e01fe083f19e60d" name="abf5f34c988680bba2e01fe083f19e60d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf5f34c988680bba2e01fe083f19e60d">&#9670;&#160;</a></span>humLow</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int humLow = 30</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Límite inferior de humedad </p>
+
 </div>
 </div>
 <a id="a6f43d95a3d9afcff66587fc3ef9117d5" name="a6f43d95a3d9afcff66587fc3ef9117d5"></a>
@@ -861,6 +2298,25 @@ unsigned short&#160;</td><td class="memItemRight" valign="bottom"><b>analogValue
 <b>Initial value:</b><div class="fragment"><div class="line">= {</div>
 <div class="line">    300, 300, 300, 300}</div>
 </div><!-- fragment -->
+<p>Duraciones de cada nota en la melodía de error. </p>
+
+</div>
+</div>
+<a id="ad4db59ccea8946af2bb70f8269e99eeb" name="ad4db59ccea8946af2bb70f8269e99eeb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad4db59ccea8946af2bb70f8269e99eeb">&#9670;&#160;</a></span>input</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a080a822f0093973313bd644e517a5090">Input</a> input = <a class="el" href="#a080a822f0093973313bd644e517a5090a5b9f6d065e6e98483b3d3ed01f4f6cbe">Input::unknown</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Última entrada capturada por el sistema. </p>
+<p>Se utiliza para evaluar condiciones de transición. </p>
+
 </div>
 </div>
 <a id="a856e873a1d14012d57ddb813c4a1e40a" name="a856e873a1d14012d57ddb813c4a1e40a"></a>
@@ -880,7 +2336,57 @@ unsigned short&#160;</td><td class="memItemRight" valign="bottom"><b>analogValue
 <div class="line">    {<span class="charliteral">&#39;7&#39;</span>, <span class="charliteral">&#39;8&#39;</span>, <span class="charliteral">&#39;9&#39;</span>, <span class="charliteral">&#39;C&#39;</span>},</div>
 <div class="line">    {<span class="charliteral">&#39;*&#39;</span>, <span class="charliteral">&#39;0&#39;</span>, <span class="charliteral">&#39;#&#39;</span>, <span class="charliteral">&#39;D&#39;</span>}}</div>
 </div><!-- fragment -->
-<p>Matrix keyboard key mapping. </p>
+<p>Mapeo de teclas del teclado matricial. </p>
+<p>Esta matriz define la disposición de los caracteres en el teclado físico. </p>
+
+</div>
+</div>
+<a id="a2b9930ebaec8233f157d5cbcc193b350" name="a2b9930ebaec8233f157d5cbcc193b350"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b9930ebaec8233f157d5cbcc193b350">&#9670;&#160;</a></span>luzHigh</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int luzHigh = 800</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Umbrales de luz para generar alertas. </p>
+<p>Límite superior de luz </p>
+
+</div>
+</div>
+<a id="a8d23b2f24705f230a4c6a332a1526f08" name="a8d23b2f24705f230a4c6a332a1526f08"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8d23b2f24705f230a4c6a332a1526f08">&#9670;&#160;</a></span>luzLow</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int luzLow = 200</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Límite inferior de luz </p>
+
+</div>
+</div>
+<a id="a0d4b3de8f6c2f180360bdf15af5d0c7d" name="a0d4b3de8f6c2f180360bdf15af5d0c7d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0d4b3de8f6c2f180360bdf15af5d0c7d">&#9670;&#160;</a></span>password</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char password[6] = {'1', '1', '2', '2', '3', '#'}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Contraseña de acceso al sistema. </p>
+<p>La contraseña está definida como un arreglo de caracteres y debe ser introducida en el teclado para verificar el acceso. </p>
 
 </div>
 </div>
@@ -896,8 +2402,11 @@ unsigned short&#160;</td><td class="memItemRight" valign="bottom"><b>analogValue
       </table>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">= {</div>
-<div class="line">    500, 500, 500, 500, 500, 500, 500, 500, 500, 500}</div>
+<div class="line">    500, 500, 500, 500, 500, 500, 500, 500, 500, 500</div>
+<div class="line">}</div>
 </div><!-- fragment -->
+<p>Duraciones de cada nota en la melodía de éxito. </p>
+
 </div>
 </div>
 <a id="a898fb84dc752c9163986938f4bbf60af" name="a898fb84dc752c9163986938f4bbf60af"></a>
@@ -912,9 +2421,62 @@ unsigned short&#160;</td><td class="memItemRight" valign="bottom"><b>analogValue
       </table>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">= {</div>
-<div class="line">    NOTE_C4, NOTE_D4, NOTE_E4, NOTE_F4, NOTE_G4, NOTE_A4, NOTE_B4, NOTE_C5, NOTE_D5, NOTE_E5</div>
-<div class="line">    }</div>
+<div class="line">    NOTE_C4, NOTE_D4, NOTE_E4, NOTE_F4, NOTE_G4, NOTE_A4, NOTE_B4,</div>
+<div class="line">    NOTE_C5, NOTE_D5, NOTE_E5</div>
+<div class="line">}</div>
 </div><!-- fragment -->
+<p>Melodía utilizada para confirmaciones correctas. </p>
+
+</div>
+</div>
+<a id="a4807e122cc77f1804acb97d47df54ec1" name="a4807e122cc77f1804acb97d47df54ec1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4807e122cc77f1804acb97d47df54ec1">&#9670;&#160;</a></span>tarjetasConocidas</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="struct_tarjeta_registrada.html">TarjetaRegistrada</a> tarjetasConocidas[]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
+<div class="line">  {{0x5C, 0xF8, 0xD7, 0x73}, -2},</div>
+<div class="line">  {{0xF3, 0xAF, 0x2B, 0x27}, 2}</div>
+<div class="line">}</div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="a6a1e4720fd7bbd1f81bebf1b3de0efec" name="a6a1e4720fd7bbd1f81bebf1b3de0efec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6a1e4720fd7bbd1f81bebf1b3de0efec">&#9670;&#160;</a></span>tempHigh</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tempHigh = 29</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Umbrales de temperatura para generar alertas. </p>
+<p>Límite superior de temperatura </p>
+
+</div>
+</div>
+<a id="a94903018690fcd7ea22fe857aee17107" name="a94903018690fcd7ea22fe857aee17107"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a94903018690fcd7ea22fe857aee17107">&#9670;&#160;</a></span>tempLow</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int tempLow = 15</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Límite inferior de temperatura </p>
+
 </div>
 </div>
 <a id="a9ca5b274669eb7515f959561e1af2d88" name="a9ca5b274669eb7515f959561e1af2d88"></a>
@@ -929,8 +2491,11 @@ unsigned short&#160;</td><td class="memItemRight" valign="bottom"><b>analogValue
       </table>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">= {</div>
-<div class="line">    500, 500, 500, 500, 500, 500, 500, 500, 500, 500}</div>
+<div class="line">    500, 500, 500, 500, 500, 500, 500, 500, 500, 500</div>
+<div class="line">}</div>
 </div><!-- fragment -->
+<p>Duraciones de cada nota en la melodía de error. </p>
+
 </div>
 </div>
 <a id="a6ac43296776e39a14c32ba0b29129b06" name="a6ac43296776e39a14c32ba0b29129b06"></a>
@@ -945,9 +2510,12 @@ unsigned short&#160;</td><td class="memItemRight" valign="bottom"><b>analogValue
       </table>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">= {</div>
-<div class="line">    NOTE_C4, NOTE_B3, NOTE_A3, NOTE_G3, NOTE_F3, NOTE_E3, NOTE_D3, NOTE_C3, NOTE_B2, NOTE_A2</div>
-<div class="line">    }</div>
+<div class="line">    NOTE_C4, NOTE_B3, NOTE_A3, NOTE_G3, NOTE_F3, NOTE_E3, NOTE_D3,</div>
+<div class="line">    NOTE_C3, NOTE_B2, NOTE_A2</div>
+<div class="line">}</div>
 </div><!-- fragment -->
+<p>Melodía utilizada para indicar una acción incorrecta. </p>
+
 </div>
 </div>
 </div><!-- contents -->
@@ -963,7 +2531,7 @@ unsigned short&#160;</td><td class="memItemRight" valign="bottom"><b>analogValue
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a href="proyect_8ino.html">proyect.ino</a></li>
+    <li class="navelem"><a href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a href="dir_de9b867add45c7d9b59b62bc3f47ea95.html">proyect</a></li><li class="navelem"><a href="proyect_8ino.html">proyect.ino</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.14.0 </li>
   </ul>
 </div>
